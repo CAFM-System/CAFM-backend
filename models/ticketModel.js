@@ -13,6 +13,17 @@ const getAllTickets = async ()=> {
     return data;
 }
 
+const createTicket = async (ticketData) => {
+    const { data, error } = await supabase
+        .from(TABLE_NAME)
+        .insert([ticketData])
+        .single();
+    if (error) {
+        throw new Error(error.message);
+    }
+    return data;
+}
 
 
-export  { getAllTickets };
+
+export  { getAllTickets, createTicket };
