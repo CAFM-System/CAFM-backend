@@ -1,8 +1,9 @@
+
 import { supabase } from "../config/supabaseClient.js";
 
 const TABLE_NAME = "progress_histories";
 
-const getProgressHistoryByUserId = async (ticketId) => {
+const getProgressHistoryByTicketId = async (ticketId) => {
     const { data, error } = await supabase
         .from(TABLE_NAME)
         .select("*")
@@ -11,10 +12,13 @@ const getProgressHistoryByUserId = async (ticketId) => {
 
     if (error) throw new Error(error.message);
 
+    if (!data || data.length === 0)
+        return { message: "No progress history found for this ticket ID" };
+
     return data;
 }
 
-const addProgressHistory = async (progressData) => {
+const addProgressHistoryEntry = async (progressData) => {
     const { data, error } = await supabase
         .from(TABLE_NAME)
         .insert([progressData])
@@ -25,4 +29,4 @@ const addProgressHistory = async (progressData) => {
     return data;
 }
 
-export { getProgressHistoryByUserId, addProgressHistory };
+export { getProgressHistoryByTicketId, addProgressHistoryEntry };
