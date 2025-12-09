@@ -6,14 +6,14 @@ const getAllTickets = async ()=> {
     const { data, error} = await supabase
         .from (TABLE_NAME)
         .select("*")
-        .order("created_at", { ascending: false});
+        .order("created_at", { ascending: true});
     if (error) {
         throw new Error(error.message);
     }
     return data;
 }
 
-const createTicket = async (ticketData) => {
+const addTicketData = async (ticketData) => {
     const { data, error } = await supabase
         .from(TABLE_NAME)
         .insert([ticketData])
@@ -26,4 +26,4 @@ const createTicket = async (ticketData) => {
 
 
 
-export  { getAllTickets, createTicket };
+export  { getAllTickets, addTicketData };
