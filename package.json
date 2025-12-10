@@ -19,7 +19,8 @@
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "install": "^0.13.0",
-    "npm": "^11.6.4"
+    "npm": "^11.6.4",
+    "puppeteer": "^24.32.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.11"
