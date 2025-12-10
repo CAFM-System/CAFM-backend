@@ -110,7 +110,7 @@ const ticketsPDF = (tickets, data) => {
             <div class="date">Generated on: ${date}</div>
         </body>
         </html>
-    S`;
+    `;
 };
 
 export default ticketsPDF;
