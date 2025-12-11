@@ -2,11 +2,11 @@ import { supabase } from "../config/supabaseClient.js";
 
 const TABLE_NAME = "tickets";
 
-const getAllTickets = async ()=> {
-    const { data, error} = await supabase
-        .from (TABLE_NAME)
+const getAllTickets = async () => {
+    const { data, error } = await supabase
+        .from(TABLE_NAME)
         .select("*")
-        .order("created_at", { ascending: true});
+        .order("created_at", { ascending: true });
     if (error) {
         throw new Error(error.message);
     }
@@ -24,6 +24,29 @@ const addTicketData = async (ticketData) => {
     return data;
 }
 
+/**
+ * Fetch tickets created in a specific month and year
+ * @async
+ * @param {number} year - The year to filter tickets by
+ * @param {number} month - The month to filter tickets by (1-12)
+ * @returns {Promise<Array<Object>>} Array of ticket objects created in the specified month and year
+ * @throws {Error} Throws an error if the database query fails
+ */
+const getTicketsByCreatedMonth = async (year, month) => {
+    const startDate = new Date(year, month - 1, 1).toISOString();
+    const endDate = new Date(year, month, 1).toISOString();
 
+    const { data, error } = await supabase
+        .from(TABLE_NAME)
+        .select("*")
+        .gte("created_at", startDate)
+        .lt("created_at", endDate)
+        .order("created_at", { ascending: false });
 
-export  { getAllTickets, addTicketData };
+    if (error) {
+        throw new Error(error.message);
+    }
+    return data;
+}
+
+export { getAllTickets, addTicketData, getTicketsByCreatedMonth };
