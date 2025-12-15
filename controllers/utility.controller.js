@@ -1,5 +1,6 @@
 import generatePDF from "../utils/generatePDF.js";
 import { getAllTickets, getTicketsByCreatedMonth } from "../models/ticket.Model.js";
+import generateExcel from "../utils/generateExcel.js";
 import fs from "fs";
 
 /**
@@ -75,4 +76,43 @@ const generateTicketsPDF = async (req, res) => {
     }
 }
 
-export { generateTicketsPDF };
+/** Generate Excel  report of tickets based on specified criteria */
+const generateTicketsExcel = async (req, res) => {
+    try {
+        let tickets = [];
+        const { by, year, month, status } = req.query;
+
+        if (!by || !year || !month || !status){
+            return res.status(400).json({ message: "Missing required parameters" });
+        }
+
+        if (by === "year") tickets = await getAllTickets();
+        else if (by === "month") tickets = await getTicketsByCreatedMonth(year, month);
+
+        const printableTickets = createPrintableTicketsData(tickets);
+
+        if (!printableTickets || printableTickets.length === 0) {
+            return res.status(404).json({ message: "No tickets found for the specified criteria" });
+        }
+
+        const filePath = await generateExcel(printableTickets, req.query);
+
+        res.download(filePath, (error) => {
+            if (error) {
+                console.error("Error sending file:", error);
+                return res.status(500).json({ message: "Error downloading the file", error: error.message });
+            }
+
+            setTimeout(() => {
+                fs.unlink(filePath, (unlinkErr) => {
+                    if (unlinkErr) console.error("Delete error:", unlinkErr);
+                    else console.log(`Deleted: ${filePath}`);
+                });
+            }, 60_000);
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Failed to generate Excel", error: error.message });
+    }
+};
+
+export { generateTicketsPDF, generateTicketsExcel };
