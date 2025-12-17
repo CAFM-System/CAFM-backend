@@ -1,22 +1,33 @@
-import { supabase } from "../config/supabaseClient.js";
+import { supabase, supabaseAdmin } from "../config/supabaseClient.js";
 
 const TABLE_NAME = "tickets";
 
-const getAllTickets = async (supabaseUser) => {
-    const { data, error } = await supabaseUser
+const getAllTickets = async (user) => {
+    let query = supabaseAdmin
         .from(TABLE_NAME)
         .select("*")
         .order("created_at", { ascending: true });
+
+    if(user.role === "resident"){
+        query = query.eq("resident_id", user.id);
+    }
+
+    if(user.role === "technician"){
+        query = query.eq("technician_id", user.id);
+    }
+
+    const { data, error } = await query;
     if (error) {
         throw new Error(error.message);
     }
     return data;
 }
 
-const addTicketData = async (ticketData,supabaseUser) => {
-    const { data, error } = await supabaseUser
+const addTicketData = async (ticketData) => {
+    const { data, error } = await supabaseAdmin
         .from(TABLE_NAME)
         .insert([ticketData])
+        .select()
         .single();
     if (error) {
         throw new Error(error.message);
