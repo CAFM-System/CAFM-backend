@@ -1,8 +1,12 @@
 import { addTicketData, getAllTickets } from "../models/ticket.Model.js";
 
+
 const diplayAllTickets = async (req, res) => {
     try {
-          const tickets = await getAllTickets();
+            
+
+          const tickets = await getAllTickets(req.user);
+
           res.status(200).json(
             {
                 message : "Tickets fetched successfully",
@@ -16,7 +20,11 @@ const diplayAllTickets = async (req, res) => {
 
 const createTicket = async (req, res) => {
     try {
-        const ticketData = req.body;
+        const ticketData = {
+            ...req.body,
+            resident_id: req.user.id
+        };
+        
         const newTicket = await addTicketData(ticketData);
         res.status(201).json({
             message: "Ticket created successfully",
