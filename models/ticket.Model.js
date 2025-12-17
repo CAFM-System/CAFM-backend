@@ -23,6 +23,18 @@ const getAllTickets = async (user) => {
     return data;
 }
 
+const getTicketById = async (ticketId) => {
+    const { data,error} = await supabaseAdmin
+        .from(TABLE_NAME)
+        .select("*")
+        .eq("id", ticketId)
+        .single();
+    if (error) {
+        throw new Error(error.message);
+    }
+    return data;
+}
+
 const addTicketData = async (ticketData) => {
     const { data, error } = await supabaseAdmin
         .from(TABLE_NAME)
@@ -60,4 +72,4 @@ const getTicketsByCreatedMonth = async (year, month) => {
     return data;
 }
 
-export { getAllTickets, addTicketData, getTicketsByCreatedMonth };
+export { getAllTickets, addTicketData, getTicketsByCreatedMonth,getTicketById };
