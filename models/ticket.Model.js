@@ -2,8 +2,8 @@ import { supabase } from "../config/supabaseClient.js";
 
 const TABLE_NAME = "tickets";
 
-const getAllTickets = async () => {
-    const { data, error } = await supabase
+const getAllTickets = async (supabaseUser) => {
+    const { data, error } = await supabaseUser
         .from(TABLE_NAME)
         .select("*")
         .order("created_at", { ascending: true });
@@ -13,8 +13,8 @@ const getAllTickets = async () => {
     return data;
 }
 
-const addTicketData = async (ticketData) => {
-    const { data, error } = await supabase
+const addTicketData = async (ticketData,supabaseUser) => {
+    const { data, error } = await supabaseUser
         .from(TABLE_NAME)
         .insert([ticketData])
         .single();
