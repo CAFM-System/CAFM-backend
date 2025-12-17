@@ -1,5 +1,5 @@
 import { getTicketById } from "../models/ticket.Model.js";
-import { insertTicketReview } from "../models/ticketReview.model.js";
+import { getReviewsByTicketId, insertTicketReview } from "../models/ticketReview.model.js";
 
 const addTicketReview = async (req, res)=>{
     try {
@@ -34,4 +34,19 @@ const addTicketReview = async (req, res)=>{
     }
 }
 
-export { addTicketReview };
+
+const getTicketReview = async (req, res)=>{
+    try {
+        const { ticketId } = req.params;
+
+        const review = await getReviewsByTicketId(ticketId);
+        if(!review){
+            return res.status(404).json({ message: "Review not found for this ticket" });
+        }
+        res.status(200).json({ review });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+export { addTicketReview, getTicketReview };

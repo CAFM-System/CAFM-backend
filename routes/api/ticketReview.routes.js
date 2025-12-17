@@ -1,8 +1,8 @@
 import express from "express";
-import { addTicketReview } from "../../controllers/ticketReview.controller.js";
+import { addTicketReview, getTicketReview } from "../../controllers/ticketReview.controller.js";
 
 const ticketReviewRouter = express.Router();
 
 ticketReviewRouter.post("/", addTicketReview);
-
+ticketReviewRouter.get("/:ticketId", getTicketReview);
 export default ticketReviewRouter;
