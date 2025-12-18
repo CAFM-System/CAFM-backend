@@ -43,4 +43,15 @@ const getUserProfile = async (userId) => {
   return data;
 };
 
-export { loginUser, getUserRole, getUserProfile };
+// Logout user by invalidating their session
+const logoutUser = async (token) => {
+  const { error } = await supabaseAdmin.auth.admin.signOut(token);
+
+  if (error) {
+    throw new Error("LOGOUT_FAILED");
+  }
+
+  return true;
+};
+
+export { loginUser, getUserRole, getUserProfile, logoutUser };

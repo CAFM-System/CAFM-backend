@@ -1,7 +1,6 @@
-import { loginUser, getUserRole, getUserProfile } from "../models/auth.model.js";
+import { loginUser, getUserRole, getUserProfile, logoutUser } from "../models/auth.model.js";
 
-
-//login controller
+// Login controller
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -52,15 +51,14 @@ const login = async (req, res) => {
   }
 };
 
-
-// getMe controller 
+// Get current user details
 const getMe = async (req, res) => {
   try {
-    // req.user comes from authenticate middleware
+    // req.user is set by authenticate middleware
     const userId = req.user.id;
 
-    console.log("GET ME REQ USER:" , req.user);
-  
+    console.log("GET ME REQ USER:", req.user);
+
     const profile = await getUserProfile(userId);
 
     return res.status(200).json({
@@ -94,4 +92,45 @@ const getMe = async (req, res) => {
   }
 };
 
-export { login, getMe };
+// Logout controller - invalidates user session
+const  logout = async (req, res) => {
+  try {
+    // Extract token from Authorization header
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if (!token) {
+      return res.status(401).json({
+        message: "No token provided"
+      });
+    }
+
+    // Invalidate the session
+    await logoutUser(token);
+
+    console.log("LOGOUT USER EMAIL:", req.user.email);
+   
+
+    return res.status(200).json({
+      success: true,
+      message: "Logout successful",
+      
+    });
+
+
+  } catch (err) {
+    console.error(err.message);
+
+    if (err.message === "LOGOUT_FAILED") {
+      return res.status(500).json({
+        message: "Logout failed"
+      });
+    }
+
+    return res.status(500).json({
+      message: "An error occurred during logout",
+      error: err.message
+    });
+  }
+};
+
+export { login, getMe, logout };
