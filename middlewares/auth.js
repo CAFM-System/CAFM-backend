@@ -1,4 +1,4 @@
-import { supabaseAdmin } from "../../config/supabaseClient.js";
+import { supabaseAdmin } from "../config/supabaseClient.js";
 
 const authenticate = async (req, res, next) => {
   try {

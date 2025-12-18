@@ -1,6 +1,6 @@
 import { supabaseAdmin } from "../config/supabaseClient.js";
 
-
+// login user
 const loginUser = async (email, password) => {
   const { data, error } = await supabaseAdmin.auth.signInWithPassword({
     email,
@@ -10,12 +10,9 @@ const loginUser = async (email, password) => {
   if (error || !data?.session) {
     throw new Error("INVALID_CREDENTIALS");
   }
-  return data; // { user, session }
+  return data;
 };
 
-/**
- * Get user role from profiles table
- */
 const getUserRole = async (userId) => {
   const { data, error } = await supabaseAdmin
     .from("profiles")
@@ -30,4 +27,20 @@ const getUserRole = async (userId) => {
   return data.role;
 };
 
-export {loginUser,getUserRole};
+
+//  get user profile
+const getUserProfile = async (userId) => {
+  const { data, error } = await supabaseAdmin
+    .from("profiles")
+    .select("*")
+    .eq("user_id", userId)
+    .single();
+
+  if (error || !data) {
+    throw new Error("PROFILE_NOT_FOUND");
+  }
+
+  return data;
+};
+
+export { loginUser, getUserRole, getUserProfile };

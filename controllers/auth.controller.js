@@ -1,5 +1,7 @@
-import { loginUser, getUserRole } from "../models/auth.model.js";
+import { loginUser, getUserRole, getUserProfile } from "../models/auth.model.js";
 
+
+//login controller
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -15,7 +17,6 @@ const login = async (req, res) => {
     console.log("LOGIN EMAIL:", email);
     console.log("AUTH USER ID:", user.id);
 
-    
     const role = await getUserRole(user.id);
 
     return res.status(200).json({
@@ -51,4 +52,46 @@ const login = async (req, res) => {
   }
 };
 
-export { login };
+
+// getMe controller 
+const getMe = async (req, res) => {
+  try {
+    // req.user comes from authenticate middleware
+    const userId = req.user.id;
+
+    console.log("GET ME REQ USER:" , req.user);
+  
+    const profile = await getUserProfile(userId);
+
+    return res.status(200).json({
+      success: true,
+      user: {
+        id: req.user.id,
+        email: req.user.email,
+        role: req.user.role,
+        profile: {
+          firstName: profile.first_name,
+          lastName: profile.last_name,
+          phone: profile.phone,
+          createdAt: profile.created_at
+        }
+      }
+    });
+
+  } catch (err) {
+    console.error(err.message);
+
+    if (err.message === "PROFILE_NOT_FOUND") {
+      return res.status(404).json({
+        message: "User profile not found"
+      });
+    }
+
+    return res.status(500).json({
+      message: "Failed to get user details",
+      error: err.message
+    });
+  }
+};
+
+export { login, getMe };
