@@ -12,7 +12,7 @@ const authenticate = async (req, res, next) => {
 
     const { data: roleData, error: roleError } = await supabaseAdmin
       .from("profiles")
-      .select("role")
+      .select("role,first_name,last_name")
       .eq("user_id", user.id)
       .single();
 
@@ -21,7 +21,9 @@ const authenticate = async (req, res, next) => {
     req.user = {
       id: user.id,
       email: user.email,
-      role: roleData.role
+      role: roleData.role,
+      name : `${roleData.first_name} ${roleData.last_name}`
+
     };
 
     next();
