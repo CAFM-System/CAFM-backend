@@ -47,6 +47,19 @@ const addTicketData = async (ticketData) => {
     return data;
 }
 
+const updateTicket = async (ticketId, updateData) => {
+    const { data, error } = await supabase
+        .from(TABLE_NAME)
+        .update(updateData)
+        .eq("id", ticketId)
+        .select()
+        .single();
+    if (error) {
+        throw new Error(error.message);
+    }
+    return data;
+}
+
 /**
  * Fetch tickets created in a specific month and year
  * @async
@@ -72,4 +85,4 @@ const getTicketsByCreatedMonth = async (year, month) => {
     return data;
 }
 
-export { getAllTickets, addTicketData, getTicketsByCreatedMonth,getTicketById };
+export { getAllTickets, addTicketData, getTicketsByCreatedMonth,getTicketById,updateTicket };
