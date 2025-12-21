@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const transpoter = nodemailer.createTransport({
+const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
         user: process.env.EMAIL_USER,
@@ -11,8 +11,11 @@ const transpoter = nodemailer.createTransport({
     }
 });
 
-const sendEmail = async (to, subject, text) => {
-    return transpoter.sendMail({
+const sendEmail = async ({to, subject,html}) => {
+    if(!to){
+        throw new Error("sendEmail called without recipient 'to' address");
+    }
+    return transporter.sendMail({
         from:`"CAFM System" <${process.env.EMAIL_USER}>`,
         to,
         subject,

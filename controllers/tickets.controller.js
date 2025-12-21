@@ -1,5 +1,7 @@
+import { notifyAdmins } from "../models/notification.model.js";
 import { addProgressHistoryEntry } from "../models/progressHistory.model.js";
 import { addTicketData, getAllTickets, updateTicket } from "../models/ticket.Model.js";
+import { newTicketAdminEmail } from "../utils/emailTemplates.js";
 
 
 const diplayAllTickets = async (req, res) => {
@@ -27,6 +29,13 @@ const createTicket = async (req, res) => {
         };
         
         const newTicket = await addTicketData(ticketData);
+
+        await notifyAdmins(
+            "New Ticket Created",
+            newTicketAdminEmail(newTicket),
+            
+        )
+
         res.status(201).json({
             message: "Ticket created successfully",
             ticket: newTicket
