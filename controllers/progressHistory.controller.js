@@ -1,4 +1,7 @@
+import { notifyUserById } from "../models/notification.model.js";
 import { getProgressHistoryByTicketId, addProgressHistoryEntry } from "../models/progressHistory.model.js";
+import { getTicketById } from "../models/ticket.Model.js";
+import { statusUpdateEmail } from "../utils/emailTemplates.js";
 
 const getProgressHistory = async (req, res) => {
     try {
@@ -22,6 +25,16 @@ const addProgressHistory = async (req, res) => {
             return res.status(400).json({ message: "Incomplete progress history data" });
 
         await addProgressHistoryEntry(progressData);
+
+        const ticket  = await getTicketById(progressData.ticket_id);
+        
+            await notifyUserById(
+                ticket.resident_id,
+                "Ticket Status Updated",
+                statusUpdateEmail(ticket, progressData.status)
+            )
+        
+
 
         res.status(201).json({ message: "Progress history entry added successfully" });
     } catch (error) {
