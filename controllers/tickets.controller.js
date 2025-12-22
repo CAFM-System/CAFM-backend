@@ -1,5 +1,7 @@
+import { notifyAdmins, notifyUserById } from "../models/notification.model.js";
 import { addProgressHistoryEntry } from "../models/progressHistory.model.js";
 import { addTicketData, getAllTickets, updateTicket } from "../models/ticket.Model.js";
+import { newTicketAdminEmail, residentAssignedEmail, technicianAssignmentEmail } from "../utils/emailTemplates.js";
 
 
 const diplayAllTickets = async (req, res) => {
@@ -27,6 +29,13 @@ const createTicket = async (req, res) => {
         };
         
         const newTicket = await addTicketData(ticketData);
+
+        await notifyAdmins(
+            "New Ticket Created",
+            newTicketAdminEmail(newTicket),
+            
+        )
+
         res.status(201).json({
             message: "Ticket created successfully",
             ticket: newTicket
@@ -41,9 +50,21 @@ const assignTechnicianToTicket = async (req, res) => {
         const { ticketId} = req.params;
         const { technician_id } = req.body;
 
-        await updateTicket(
+        const ticket = await updateTicket(
             ticketId,
             { technician_id: technician_id ,status: 'assigned'}
+        )
+
+        await notifyUserById(
+            ticket.technician_id,
+            "New Ticket Assigned",
+            technicianAssignmentEmail(ticket)
+        )
+
+        await notifyUserById(
+            ticket.resident_id,
+            "Technician Assigned to Your Ticket",
+            residentAssignedEmail(ticket)
         )
 
         await addProgressHistoryEntry(
@@ -52,6 +73,7 @@ const assignTechnicianToTicket = async (req, res) => {
                 status: 'assigned',
                 updated_by:`${req.user.name} (${req.user.role})`,
                 message: "Technician assigned to the ticket",
+                notify : true
                 
             }
         );
