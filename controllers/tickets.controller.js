@@ -48,11 +48,11 @@ const createTicket = async (req, res) => {
 const assignTechnicianToTicket = async (req, res) => {
     try {
         const { ticketId} = req.params;
-        const { technician_id } = req.body;
+        const { technician_id,priority } = req.body;
 
         const ticket = await updateTicket(
             ticketId,
-            { technician_id: technician_id ,status: 'assigned'}
+            { technician_id: technician_id ,priority:priority,status: 'assigned'}
         )
 
         await notifyUserById(
@@ -73,7 +73,7 @@ const assignTechnicianToTicket = async (req, res) => {
                 status: 'assigned',
                 updated_by:`${req.user.name} (${req.user.role})`,
                 message: "Technician assigned to the ticket",
-                notify : true
+                
                 
             }
         );
