@@ -26,10 +26,13 @@ const createTicket = async (req, res) => {
     try {
         const ticketData = {
             ...req.body,
-            resident_id: req.user.id
+            resident_id: req.user.id,
+            status: 'open'
         };
         
         const newTicket = await addTicketData(ticketData);
+
+        
 
         await notifyAdmins(
             "New Ticket Created",
@@ -38,6 +41,17 @@ const createTicket = async (req, res) => {
         )
         await notifyAdminsSMS(
             newTicketAdminSMS(newTicket)
+        );
+
+        await addProgressHistoryEntry(
+            {
+                ticket_id: newTicket.id,
+                status: 'open',
+                updated_by:`${req.user.name} (${req.user.role})`,
+                message: "Ticket created",
+                
+                
+            }
         );
 
         res.status(201).json({
