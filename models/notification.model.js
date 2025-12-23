@@ -1,5 +1,6 @@
 import { supabase, supabaseAdmin } from "../config/supabaseClient.js";
 import { sendEmail } from "../utils/mailer.js";
+import { sendTextLKSMS } from "../utils/sms.js";
 
 const notifyUserById = async (userId, subject, html)=>{
 
@@ -47,4 +48,55 @@ const notifyAdmins = async (subject,html)=>{
     }
 }
 
-export {notifyUserById,notifyAdmins};
+const notifyUserByIdSMS = async (userId, message) => {
+    if (!userId) {
+        console.error("notifyUserByIdSMS called with empty userId");
+        return;
+    }
+
+    if (!message) {
+        console.error("notifyUserByIdSMS called with empty message");
+        return;
+    }
+
+    // Get user profile for phone number
+    const { data: profile, error } = await supabaseAdmin
+        .from("profiles")
+        .select("phone")
+        .eq("user_id", userId)
+        .maybeSingle();
+
+    if (error) {
+        console.error("Error fetching user profile for SMS:", error.message);
+        return;
+    }
+
+    if (!profile?.phone) {
+        console.log(`No phone number found for user ${userId}`);
+        return;
+    }
+
+    try {
+        await sendTextLKSMS(profile.phone, message);
+        console.log(`✓ SMS sent to ${profile.phone}`);
+    } catch (error) {
+        console.error("Error sending SMS:", error);
+    }
+};
+
+const notifyAdminsSMS = async (message) => {
+    const { data: admins, error } = await supabaseAdmin
+        .from("admins")
+        .select("user_id");
+
+    if (error) {
+        console.error("Error fetching admins for SMS notification:", error.message);
+        return;
+    }
+
+    for (const admin of admins) {
+        await notifyUserByIdSMS(admin.user_id, message);
+    }
+};
+
+export {notifyUserById,notifyAdmins,notifyUserByIdSMS,notifyAdminsSMS};

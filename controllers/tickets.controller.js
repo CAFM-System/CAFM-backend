@@ -1,7 +1,8 @@
-import { notifyAdmins, notifyUserById } from "../models/notification.model.js";
+import { notifyAdmins, notifyUserById, notifyUserByIdSMS, notifyAdminsSMS } from "../models/notification.model.js";
 import { addProgressHistoryEntry } from "../models/progressHistory.model.js";
 import { addTicketData, getAllTickets, updateTicket } from "../models/ticket.Model.js";
 import { newTicketAdminEmail, residentAssignedEmail, technicianAssignmentEmail } from "../utils/emailTemplates.js";
+import { newTicketAdminSMS, technicianAssignmentSMS, residentAssignedSMS } from "../utils/smsTemplates.js";
 
 
 const diplayAllTickets = async (req, res) => {
@@ -35,6 +36,9 @@ const createTicket = async (req, res) => {
             newTicketAdminEmail(newTicket),
             
         )
+        await notifyAdminsSMS(
+            newTicketAdminSMS(newTicket)
+        );
 
         res.status(201).json({
             message: "Ticket created successfully",
@@ -66,6 +70,16 @@ const assignTechnicianToTicket = async (req, res) => {
             "Technician Assigned to Your Ticket",
             residentAssignedEmail(ticket)
         )
+
+        await notifyUserByIdSMS(
+            ticket.technician_id,
+            technicianAssignmentSMS(ticket)
+        );
+
+        await notifyUserByIdSMS(
+            ticket.resident_id,
+            residentAssignedSMS(ticket)
+        );
 
         await addProgressHistoryEntry(
             {
