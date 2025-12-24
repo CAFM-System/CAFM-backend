@@ -27,7 +27,8 @@ const createTicket = async (req, res) => {
         const ticketData = {
             ...req.body,
             resident_id: req.user.id,
-            status: 'open'
+            status: 'open',
+            resident_name: req.user.name
         };
         
         const newTicket = await addTicketData(ticketData);
