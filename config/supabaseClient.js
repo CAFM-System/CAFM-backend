@@ -7,14 +7,24 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
 
+const options = {
+  auth: {
+    persistSession: false, 
+    autoRefreshToken: false,
+    detectSessionInUrl: false
+  }
+};
+
 const supabaseAdmin = createClient(
     supabaseUrl,
-    supabaseServiceRoleKey
+    supabaseServiceRoleKey,
+    options
 );
 
 const supabase = createClient(
     supabaseUrl,
-    supabaseAnonKey
+    supabaseAnonKey,
+    options
 );
 
 export { supabaseAdmin, supabase };

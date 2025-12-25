@@ -1,7 +1,7 @@
-import { supabaseAdmin } from "../config/supabaseClient.js";
+import { supabase, supabaseAdmin } from "../config/supabaseClient.js";
 
 const getTechnicians = async () => {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await supabase
         .from('profiles')
         .select("user_id,first_name,last_name")
         .eq('role', 'technician');
