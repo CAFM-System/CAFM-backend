@@ -48,7 +48,7 @@ const addTicketData = async (ticketData) => {
 }
 
 const updateTicket = async (ticketId, updateData) => {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
         .from(TABLE_NAME)
         .update(updateData)
         .eq("id", ticketId)

@@ -11,6 +11,7 @@ const notifyUserById = async (userId, subject, html)=>{
 
 
     const {data,error} = await supabaseAdmin.auth.admin.getUserById(userId);
+    
     if (error) {
         console.error("Error fetching user for notification:", error.message);
         return;
@@ -28,6 +29,7 @@ const notifyUserById = async (userId, subject, html)=>{
                 html
             }
         )
+        console.log(`✓ Notification email sent to ${data.user.email}`);
     } catch (error) {
         console.error("Error sending notification email:", error);
     }
