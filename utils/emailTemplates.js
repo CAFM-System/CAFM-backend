@@ -21,9 +21,15 @@ const statusUpdateEmail = (ticket, status)=>{
     <p>Your ticket ID: <b>${ticket.ticket_id}</b> status has been updated to <b>${status}</b>.</p>`
 };
 
+const technicianworkStartedEmail = (ticket, startTime)=>{
+    return`<h3>Work Started on Your Ticket</h3>
+    <p>The technician has started work on your ticket ID: <b>${ticket.ticket_id}</b> at <b>${startTime}</b>.</p>`
+}
+
 export {
     newTicketAdminEmail,
     technicianAssignmentEmail,
     residentAssignedEmail,
-    statusUpdateEmail
+    statusUpdateEmail,
+    technicianworkStartedEmail
 };
