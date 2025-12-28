@@ -5,6 +5,6 @@ import checkRole from "../../middlewares/roleCheck.js";
 
 const ticketReviewRouter = express.Router();
 
-ticketReviewRouter.post("/",authenticate,checkRole("resident"), addTicketReview);
+ticketReviewRouter.post("/:ticketId",authenticate,checkRole("resident"), addTicketReview);
 ticketReviewRouter.get("/:ticketId",authenticate,checkRole("resident","admin","technician"), getTicketReview);
 export default ticketReviewRouter;

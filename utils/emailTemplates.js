@@ -26,10 +26,16 @@ const technicianworkStartedEmail = (ticket, startTime)=>{
     <p>The technician has started work on your ticket ID: <b>${ticket.ticket_id}</b> at <b>${startTime}</b>.</p>`
 }
 
+const resolvedTicketEmail = (ticket, resolveTime)=>{
+    return`<h3>Ticket Resolved</h3>
+    <p>Your ticket ID: <b>${ticket.ticket_id}</b> has been resolved at <b>${resolveTime}</b>.</p>`
+}
+
 export {
     newTicketAdminEmail,
     technicianAssignmentEmail,
     residentAssignedEmail,
     statusUpdateEmail,
-    technicianworkStartedEmail
+    technicianworkStartedEmail,
+    resolvedTicketEmail
 };

@@ -3,7 +3,8 @@ import { getReviewsByTicketId, insertTicketReview } from "../models/ticketReview
 
 const addTicketReview = async (req, res)=>{
     try {
-        const { ticketId, rating, review} = req.body;
+        const { ticketId } = req.params;
+        const { rating, review} = req.body;
         const residentId = req.user.id;
 
         if(!ticketId || !rating){
@@ -24,7 +25,7 @@ const addTicketReview = async (req, res)=>{
             resident_id: residentId,
             technician_id: ticket.technician_id,
             rating,
-            review
+            review: review || ""
         }
 
         await insertTicketReview(reviewData);
@@ -43,7 +44,7 @@ const getTicketReview = async (req, res)=>{
         if(!review){
             return res.status(404).json({ message: "Review not found for this ticket" });
         }
-        res.status(200).json({ review });
+        res.status(200).json(review);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
