@@ -27,8 +27,7 @@ const getUserRole = async (userId) => {
   return data.role;
 };
 
-
-//  get user profile
+// get user profile
 const getUserProfile = async (userId) => {
   const { data, error } = await supabaseAdmin
     .from("profiles")
@@ -54,4 +53,17 @@ const logoutUser = async (token) => {
   return true;
 };
 
-export { loginUser, getUserRole, getUserProfile, logoutUser };
+// Send password reset email
+const sendPasswordResetEmail = async (email) => {
+  const { data, error } = await supabaseAdmin.auth.resetPasswordForEmail(email, {
+    redirectTo: `${process.env.FRONTEND_URL}/reset-password`
+  });
+
+  if (error) {
+    throw new Error("EMAIL_SEND_FAILED");
+  }
+
+  return data;
+};
+
+export { loginUser, getUserRole, getUserProfile, logoutUser, sendPasswordResetEmail };
