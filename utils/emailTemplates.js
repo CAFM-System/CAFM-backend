@@ -31,11 +31,17 @@ const resolvedTicketEmail = (ticket, resolveTime)=>{
     <p>Your ticket ID: <b>${ticket.ticket_id}</b> has been resolved at <b>${resolveTime}</b>.</p>`
 }
 
+const closedTicketEmail = (ticket)=>{
+    return`<h3>Ticket Closed</h3>
+    <p><b>${ticket.ticket_id}</b> has been closed.</p>`
+}
+
 export {
     newTicketAdminEmail,
     technicianAssignmentEmail,
     residentAssignedEmail,
     statusUpdateEmail,
     technicianworkStartedEmail,
-    resolvedTicketEmail
+    resolvedTicketEmail,
+    closedTicketEmail
 };
