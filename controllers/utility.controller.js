@@ -46,7 +46,7 @@ const generateTicketsPDF = async (req, res) => {
 
         if (!by || !year || !month || !status) return res.status(400).json({ message: "Missing required parameters" });
 
-        if (by === "year") tickets = await getAllTickets();
+        if (by === "year") tickets = await getAllTickets(req.user);
         else if (by === "month") tickets = await getTicketsByCreatedMonth(year, month);
 
         const printableTickets = createPrintableTicketsData(tickets);
@@ -80,13 +80,13 @@ const generateTicketsPDF = async (req, res) => {
 const generateTicketsExcel = async (req, res) => {
     try {
         let tickets = [];
-        const { by, year, month, status } = req.query;
+        const { by, year, month, status } = req.body;
 
-        if (!by || !year || !month || !status){
+        if (!by || !year || !month || !status) {
             return res.status(400).json({ message: "Missing required parameters" });
         }
 
-        if (by === "year") tickets = await getAllTickets();
+        if (by === "year") tickets = await getAllTickets(req.user);
         else if (by === "month") tickets = await getTicketsByCreatedMonth(year, month);
 
         const printableTickets = createPrintableTicketsData(tickets);
@@ -95,7 +95,7 @@ const generateTicketsExcel = async (req, res) => {
             return res.status(404).json({ message: "No tickets found for the specified criteria" });
         }
 
-        const filePath = await generateExcel(printableTickets, req.query);
+        const filePath = await generateExcel(printableTickets, req.body);
 
         res.download(filePath, (error) => {
             if (error) {
