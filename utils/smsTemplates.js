@@ -14,9 +14,31 @@ const ticketUpdatedSMS = (ticket, updateMessage) => {
     return `CAFM: Ticket ${ticket.ticket_id} updated. Status: ${ticket.status}. ${updateMessage}`;
 };
 
+const closedTicketSMS = (ticket) => {
+    return `CAFM: Ticket ${ticket.ticket_id} has been closed.`;
+}
+
+const reOpenTicketSMS = (ticket) => {
+    return `CAFM: Ticket ${ticket.ticket_id} has been reopened.`;
+}
+
+const technicianworkStartedSMS = (ticket, startTime) => {
+    return `CAFM: Work started on your ticket ${ticket.ticket_id} at ${startTime}.`;
+}
+
+const resolvedTicketSMS = (ticket, resolveTime) => {
+    return `CAFM: Your ticket ${ticket.ticket_id} has been resolved at ${resolveTime}.`;
+}
+
+
+
 export { 
     newTicketAdminSMS, 
     technicianAssignmentSMS, 
     residentAssignedSMS,
-    ticketUpdatedSMS
+    ticketUpdatedSMS,
+    closedTicketSMS,
+    reOpenTicketSMS,
+    technicianworkStartedSMS,
+    resolvedTicketSMS
 };

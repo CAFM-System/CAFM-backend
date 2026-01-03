@@ -36,6 +36,11 @@ const closedTicketEmail = (ticket)=>{
     <p><b>${ticket.ticket_id}</b> has been closed.</p>`
 }
 
+const reOpenTicketEmail = (ticket)=>{
+    return`<h3>Ticket Reopened</h3>
+    <p><b>${ticket.ticket_id}</b> has been reopened.</p>`
+}
+
 export {
     newTicketAdminEmail,
     technicianAssignmentEmail,
@@ -43,5 +48,6 @@ export {
     statusUpdateEmail,
     technicianworkStartedEmail,
     resolvedTicketEmail,
-    closedTicketEmail
+    closedTicketEmail,
+    reOpenTicketEmail
 };
