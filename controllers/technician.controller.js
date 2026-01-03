@@ -1,3 +1,4 @@
+import { addAtachments } from "../models/attachments.model.js";
 import { notifyUserById } from "../models/notification.model.js";
 import { addProgressHistoryEntry } from "../models/progressHistory.model.js";
 import { getTicketById, updateTicket } from "../models/ticket.Model.js";
@@ -58,6 +59,7 @@ const resolveTicket = async (req, res) => {
   try{
     const { ticketId } = req.params;
     const technicianId = req.user.id;
+    const attachments = req.body.attachments || [];
 
     const ticket = await getTicketById(ticketId);
 
@@ -77,9 +79,17 @@ const resolveTicket = async (req, res) => {
 
     const resolveTime = new Date().toISOString();
     const message = req.body.message || "Ticket resolved by technician";
-    const updateData = { completed_date: resolveTime, status: "resolved" };
+    const sparePartsUsed = req.body.sparePartsUsed || [];
+    const updateData = { completed_date: resolveTime, status: "resolved", spare_parts: sparePartsUsed };
+    const attachment = {
+      ticket_id: ticketId,
+      uploaded_by: req.user.id,
+      file_urls: attachments
+    }
 
     const newticket = await updateTicket(ticketId, updateData);
+
+    await addAtachments(attachment);
 
     await notifyUserById(
             ticket.resident_id,
