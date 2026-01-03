@@ -1,4 +1,4 @@
-import { notifyAdmins, notifyUserById, notifyUserByIdSMS, notifyAdminsSMS } from "../models/notification.model.js";
+import { notifyAdmin, notifyUserById } from "../models/notification.model.js";
 import { addProgressHistoryEntry } from "../models/progressHistory.model.js";
 import { addTicketData, getAllTickets, updateTicket } from "../models/ticket.Model.js";
 import { newTicketAdminEmail, residentAssignedEmail, technicianAssignmentEmail } from "../utils/emailTemplates.js";
@@ -33,16 +33,16 @@ const createTicket = async (req, res) => {
         
         const newTicket = await addTicketData(ticketData);
 
-        
-
-        await notifyAdmins(
+        console.log("New Ticket :", newTicket);
+        await notifyAdmin(
+            newTicket.job_type,
             "New Ticket Created",
             newTicketAdminEmail(newTicket),
-            
-        )
-        await notifyAdminsSMS(
             newTicketAdminSMS(newTicket)
-        );
+        )
+        
+
+       
 
         await addProgressHistoryEntry(
             {
@@ -75,26 +75,19 @@ const assignTechnicianToTicket = async (req, res) => {
         )
 
         await notifyUserById(
-            ticket.technician_id,
+            technician_id,
             "New Ticket Assigned",
-            technicianAssignmentEmail(ticket)
+            technicianAssignmentEmail(ticket),
+            technicianAssignmentSMS(ticket)
         )
 
         await notifyUserById(
             ticket.resident_id,
             "Technician Assigned to Your Ticket",
-            residentAssignedEmail(ticket)
-        )
-
-        await notifyUserByIdSMS(
-            ticket.technician_id,
-            technicianAssignmentSMS(ticket)
-        );
-
-        await notifyUserByIdSMS(
-            ticket.resident_id,
+            residentAssignedEmail(ticket),
             residentAssignedSMS(ticket)
-        );
+        )
+        
 
         await addProgressHistoryEntry(
             {

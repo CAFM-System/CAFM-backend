@@ -1,7 +1,8 @@
-import { notifyAdmins, notifyUserById } from "../models/notification.model.js";
+import { notifyAdmin, notifyUserById } from "../models/notification.model.js";
 import { addProgressHistoryEntry } from "../models/progressHistory.model.js";
 import { getTicketById, updateTicket } from "../models/ticket.Model.js";
 import { closedTicketEmail, reOpenTicketEmail } from "../utils/emailTemplates.js";
+import { closedTicketSMS, reOpenTicketSMS } from "../utils/smsTemplates.js";
 
 const closeTicket = async (req , res)=>{
     try {
@@ -15,16 +16,20 @@ const closeTicket = async (req , res)=>{
         const newticket = await updateTicket(ticketId, { status: "closed" });
         
 
-        await notifyAdmins(
+       await notifyAdmin(
+            newticket.job_type,
             "Ticket Closed",
-            closedTicketEmail(newticket)
-        )
+            closedTicketEmail(newticket),
+            closedTicketSMS(newticket)
 
-        await notifyUserById(
-            ticket.technician_id,
-            "Your Ticket is Closed",
-            closedTicketEmail(newticket)
-        );
+       )
+
+       await notifyUserById(
+            newticket.technician_id,
+            "Ticket Closed",
+            closedTicketEmail(newticket),
+            closedTicketSMS(newticket)
+       )
 
         await addProgressHistoryEntry({
             ticket_id: ticketId,
@@ -53,10 +58,12 @@ const reOpenTicket = async (req , res)=>{
         }
         const newticket = await updateTicket(ticketId, { status: "open" });
 
-        await notifyAdmins(
+        await notifyAdmin(
+            newticket.job_type,
             "Ticket Reopened",
-            reOpenTicketEmail(newticket)
-        )
+            reOpenTicketEmail(newticket),
+            reOpenTicketSMS(newticket)
+       )
 
         await addProgressHistoryEntry(
             {

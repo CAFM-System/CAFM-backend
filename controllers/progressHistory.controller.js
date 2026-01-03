@@ -1,4 +1,3 @@
-import { notifyUserById, notifyUserByIdSMS } from "../models/notification.model.js";
 import { getProgressHistoryByTicketId, addProgressHistoryEntry } from "../models/progressHistory.model.js";
 import { getTicketById } from "../models/ticket.Model.js";
 import { statusUpdateEmail } from "../utils/emailTemplates.js";
@@ -29,17 +28,6 @@ const addProgressHistory = async (req, res) => {
 
         const ticket  = await getTicketById(progressData.ticket_id);
         
-            await notifyUserById(
-                ticket.resident_id,
-                "Ticket Status Updated",
-                statusUpdateEmail(ticket, progressData.status)
-            )
-
-             await notifyUserByIdSMS(
-                ticket.resident_id,
-                "Ticket Status Updated",
-                ticketUpdatedSMS(ticket, progressData.status)
-            )
         
 
 

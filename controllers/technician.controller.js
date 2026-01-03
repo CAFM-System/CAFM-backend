@@ -3,6 +3,7 @@ import { notifyUserById } from "../models/notification.model.js";
 import { addProgressHistoryEntry } from "../models/progressHistory.model.js";
 import { getTicketById, updateTicket } from "../models/ticket.Model.js";
 import { resolvedTicketEmail, technicianworkStartedEmail } from "../utils/emailTemplates.js";
+import { resolvedTicketSMS, technicianworkStartedSMS } from "../utils/smsTemplates.js";
 
 
 const addWorkStartTime = async (req, res) => {
@@ -32,9 +33,10 @@ const addWorkStartTime = async (req, res) => {
     const newticket = await updateTicket(ticketId, updateData);
 
     await notifyUserById(
-            ticket.resident_id,
+            newticket.resident_id,
             "Work Started on Your Ticket",
-            technicianworkStartedEmail(newticket, startTime)
+            technicianworkStartedEmail(newticket, startTime),
+            technicianworkStartedSMS(newticket, startTime)
         )
 
     await addProgressHistoryEntry({
@@ -94,7 +96,8 @@ const resolveTicket = async (req, res) => {
     await notifyUserById(
             ticket.resident_id,
             "Your Ticket Has Been Resolved",
-            resolvedTicketEmail(newticket, resolveTime)
+            resolvedTicketEmail(newticket, resolveTime),
+            resolvedTicketSMS(newticket, resolveTime)
         )
 
     await addProgressHistoryEntry({
