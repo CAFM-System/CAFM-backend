@@ -43,7 +43,8 @@ const addWorkStartTime = async (req, res) => {
       ticket_id: ticketId,
       status: "in_progress",
       updated_by: `Technician (${req.user.name})`,
-      message: `Work started at ${new Date(startTime).toLocaleString("en-GB")}`
+      message: `Work started at ${new Date(startTime).toLocaleString("en-GB")}`,
+      notify_status: false
     });
 
     return res.status(200).json({
@@ -104,7 +105,8 @@ const resolveTicket = async (req, res) => {
       ticket_id: ticketId,
       status: "resolved",
       updated_by: `Technician (${req.user.name})`,
-      message: `${message}`
+      message: `${message}`,
+      notify_status: false
     });
 
     return res.status(200).json({
@@ -118,5 +120,7 @@ const resolveTicket = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 }
+
+
 
 export { addWorkStartTime, resolveTicket };

@@ -50,6 +50,7 @@ const createTicket = async (req, res) => {
                 status: 'open',
                 updated_by:`${req.user.name} (${req.user.role})`,
                 message: "Ticket created",
+                notify_status: false
                 
                 
             }
@@ -95,7 +96,7 @@ const assignTechnicianToTicket = async (req, res) => {
                 status: 'assigned',
                 updated_by:`${req.user.name} (${req.user.role})`,
                 message: "Technician assigned to the ticket",
-                
+                notify_status: false
                 
             }
         );

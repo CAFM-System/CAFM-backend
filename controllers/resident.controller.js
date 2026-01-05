@@ -35,7 +35,8 @@ const closeTicket = async (req , res)=>{
             ticket_id: ticketId,
             status: "closed",
             updated_by: `Resident (${req.user.name})`,
-            message: message
+            message: message,
+            notify_status: false
         });
 
         res.status(200).json({
@@ -70,7 +71,8 @@ const reOpenTicket = async (req , res)=>{
                 ticket_id: ticketId,
                 status: "open",
                 updated_by: `Resident (${req.user.name})`,
-                message: message
+                message: message,
+                notify_status: false
             }
         )
 

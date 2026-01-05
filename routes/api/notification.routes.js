@@ -2,9 +2,9 @@ import { getUserNotifications, clearNotification } from "../../controllers/notif
 import express from "express";
 import authenticate from "../../middlewares/auth.js";
 
-const router = express.Router();
+const notificationRouter = express.Router();
 
-router.get("/", authenticate, getUserNotifications);
-router.post("/:id", authenticate, clearNotification);
+notificationRouter.get("/", authenticate, getUserNotifications);
+notificationRouter.post("/:id", authenticate, clearNotification);
 
-export default router;
+export default notificationRouter;
