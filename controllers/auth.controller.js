@@ -72,7 +72,10 @@ const getMe = async (req, res) => {
           firstName: profile.first_name,
           lastName: profile.last_name,
           phone: profile.phone,
-          createdAt: profile.created_at
+          createdAt: profile.created_at,
+          apartmentNo: profile.residents?.apartment_no ?? null,
+          building: profile.residents?.building ?? null,
+          dateOfEntry: profile.residents?.date_of_entry ?? null,
         }
       }
     });

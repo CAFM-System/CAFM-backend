@@ -82,20 +82,19 @@ const generateExcel = async (tickets, options) => {
     worksheet.addRow([`Generated on: ${new Date().toLocaleString()}`]);
 
     // Auto-fit columns widths
-    headerRow.forEach((header, colIndex) => {
-        const columnLetter = String.fromCharCode(65 + colIndex);
-        const maxLength = header.length;
+    headerRow.eachCell((cell, colIndex) => {
+        let maxLength = cell.value ? cell.value.toString().length : 10;
 
-        worksheet.getColumn(colIndex + 1).eachCell({ includeEmpty: false }, (cell, rowNumber) => {
+        worksheet.getColumn(colIndex).eachCell({ includeEmpty: false }, (dataCell, rowNumber) => {
             if (rowNumber > 3) {
-                const cellValue = cell.value ? cell.value.toString() : "";
-                maxLength = Math.max(maxLength, cellValue.length);
+            const cellValue = dataCell.value ? dataCell.value.toString() : "";
+            maxLength = Math.max(maxLength, cellValue.length);
             }
         });
 
-        const calculatedWidth = Math.min(Math.max(maxLength * 1.2, 12), 60);
-        worksheet.getColumn(colIndex + 1).width = calculatedWidth;
+        worksheet.getColumn(colIndex).width = Math.min(Math.max(maxLength * 1.2, 12), 60);
     });
+
 
     await workbook.xlsx.writeFile(filePath);
 

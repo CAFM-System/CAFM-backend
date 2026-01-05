@@ -31,7 +31,19 @@ const getUserRole = async (userId) => {
 const getUserProfile = async (userId) => {
   const { data, error } = await supabaseAdmin
     .from("profiles")
-    .select("*")
+    .select(`
+      user_id,
+      first_name,
+      last_name,
+      phone,
+      role,
+      created_at,
+      residents!residents_user_id_fkey (
+        apartment_no,
+        building,
+        date_of_entry
+      )
+    `)
     .eq("user_id", userId)
     .single();
 
@@ -41,6 +53,7 @@ const getUserProfile = async (userId) => {
 
   return data;
 };
+
 
 // Logout user by invalidating their session
 const logoutUser = async (token) => {
