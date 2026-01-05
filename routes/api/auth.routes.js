@@ -1,5 +1,5 @@
 import express from "express";
-import { login, getMe, logout, forgotPassword,resetPassword } from "../../controllers/auth.controller.js";
+import { login, getMe, logout, forgotPassword,resetPassword, registerUser } from "../../controllers/auth.controller.js";
 import authenticate from "../../middlewares/auth.js";   
 
 const authRouter = express.Router();
@@ -17,6 +17,8 @@ authRouter.post("/logout", authenticate, logout);
 authRouter.post("/forgot-password", forgotPassword);
 
 authRouter.post("/reset-password", resetPassword);
+
+authRouter.post("/register", registerUser);
 
 
 export default authRouter;

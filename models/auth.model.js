@@ -66,4 +66,56 @@ const sendPasswordResetEmail = async (email) => {
   return data;
 };
 
-export { loginUser, getUserRole, getUserProfile, logoutUser, sendPasswordResetEmail };
+// Register user
+
+const signUpUser = async (email, password, first_name, last_name, apartment_no, phone) =>{
+  const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser(
+    {
+      email,
+      password,
+      email_confirm: true,
+    }
+  )
+  if (authError) {
+    if (authError.message.includes("Already registered")) {
+      throw new Error("USER_ALREADY_EXISTS");
+    }
+    throw  authError;
+  }
+
+  const userId = authData.user.id;
+
+  const { error: profileError } = await supabaseAdmin
+    .from("profiles")
+    .insert([
+      {
+        user_id: userId,
+        first_name,
+        last_name,
+        phone,
+        role: "resident",
+      },
+    ]);
+
+  if (profileError) {
+    throw profileError;
+  }
+
+  const { data: residentData, error: residentError } = await supabaseAdmin
+    .from("residents")
+    .insert([
+      {
+        user_id: userId,
+        apartment_no,
+        date_of_entry: new Date().toISOString().split("T")[0],
+      },
+    ]);
+
+    if (residentError) {
+      throw residentError;
+    }
+  return authData;
+  
+} 
+
+export { loginUser, getUserRole, getUserProfile, logoutUser, sendPasswordResetEmail,signUpUser };

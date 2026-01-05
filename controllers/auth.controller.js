@@ -1,4 +1,4 @@
-import { loginUser, getUserRole, getUserProfile, logoutUser, sendPasswordResetEmail } from "../models/auth.model.js";
+import { loginUser, getUserRole, getUserProfile, logoutUser, sendPasswordResetEmail, signUpUser } from "../models/auth.model.js";
 import { supabaseAdmin } from "../config/supabaseClient.js";
 import { createClient } from '@supabase/supabase-js';
 
@@ -244,4 +244,33 @@ const resetPassword = async (req, res) => {
   }
 };
 
-export { login, getMe, logout, forgotPassword, resetPassword };
+//signupUser
+
+const registerUser =async (req, res) => {
+  try {
+    const { email, password, first_name,last_name,apartment_no,phone } = req.body;
+
+    if(!email || !password || !first_name || !last_name || !apartment_no || !phone){
+      return res.status(400).json({message : "Missing required fields"})
+    }
+
+    const user = await signUpUser(email,password,first_name,last_name,apartment_no,phone);
+    return res.status(201).json({message : "User register successfully", user});
+
+  }catch (error) {
+    console.error("Register error" , error.message);
+
+    if (error.message === "USER_EXISTS"){
+      return res.status(409).json({ message : "User alresdy exists"});
+    }
+
+    return res.status(500).json ({
+
+      message : "Register Failed",
+      error : error.message
+    });
+  }
+}
+
+
+export { login, getMe, logout, forgotPassword, resetPassword, registerUser };
