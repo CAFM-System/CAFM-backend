@@ -1,4 +1,4 @@
-import { supabaseAdmin } from "../config/supabaseClient.js";
+import { supabase, supabaseAdmin } from "../config/supabaseClient.js";
 
 // login user
 const loginUser = async (email, password) => {
@@ -29,7 +29,8 @@ const getUserRole = async (userId) => {
 
 // get user profile
 const getUserProfile = async (userId) => {
-  const { data, error } = await supabaseAdmin
+  
+  const { data: profile, error: profileError } = await supabaseAdmin
     .from("profiles")
     .select(`
       user_id,
@@ -37,22 +38,33 @@ const getUserProfile = async (userId) => {
       last_name,
       phone,
       role,
-      created_at,
-      residents!residents_user_id_fkey (
-        apartment_no,
-        building,
-        date_of_entry
-      )
+      created_at
     `)
     .eq("user_id", userId)
     .single();
 
-  if (error || !data) {
+  if (profileError || !profile) {
     throw new Error("PROFILE_NOT_FOUND");
   }
 
-  return data;
+
+  const { data: resident, error: residentError } = await supabase
+    .from("residents")
+    .select("apartment_no, building, date_of_entry")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (residentError) {
+    console.error("Resident fetch error:", residentError);
+  }
+
+  
+  return {
+    ...profile,
+    residents: resident || null
+  };
 };
+
 
 
 // Logout user by invalidating their session

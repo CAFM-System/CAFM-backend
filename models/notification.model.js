@@ -73,11 +73,11 @@ const getNotificationsForUser = async (userId) => {
     }
 
     try {
-        const { data, error } = await supabaseAdmin
+        const { data, error } = await supabase
             .from("progress_histories")
             .select(`
                 *,
-                tickets!inner()
+                tickets!inner(*)
             `)
             .eq("tickets.resident_id", userId)
             .eq("notify_status", false)
@@ -97,7 +97,7 @@ const getNotificationsForUser = async (userId) => {
 
 const clearNotificationById = async (notificationId) => {
     try {
-        const { data, error } = await supabaseAdmin
+        const { data, error } = await supabase
             .from("progress_histories")
             .update({ notify_status: true })
             .eq("id", notificationId);

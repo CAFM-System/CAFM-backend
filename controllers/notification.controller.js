@@ -8,6 +8,7 @@ const getUserNotifications = async (req, res) => {
         console.log("User role:", req.user.role);
 
         const notifications = await getNotificationsForUser(userId);
+        console.log("Notifications fetched:", notifications);
 
         console.log("Found notifications count:", notifications.length);
 
