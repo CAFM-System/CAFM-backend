@@ -4,15 +4,21 @@ import path from "path";
 import ticketsPDF from "./PDF.js";
 
 const generatePDF = async (tickets, header) => {
-    const date = new Date().toISOString();
-    const filePath = path.join("exports", `tickets_${date}.pdf`);
+  const date = new Date().toISOString().replace(/[:.]/g, "-"); // safe filename
+  const filePath = path.join("exports", `tickets_${date}.pdf`);
 
-    if (!fs.existsSync("exports")) fs.mkdirSync("exports");
+  if (!fs.existsSync("exports")) fs.mkdirSync("exports");
 
-    const browser = await puppeteer.launch({
-        headless: "new",
-        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
-        timeout: 60000
+  let browser;
+  try {
+    browser = await puppeteer.launch({
+      headless: true,        // safe for Windows
+      args: [
+        '--no-sandbox',      // optional
+        '--disable-setuid-sandbox', 
+        '--disable-dev-shm-usage',
+        '--disable-gpu'
+      ]
     });
 
     const page = await browser.newPage();
@@ -22,20 +28,19 @@ const generatePDF = async (tickets, header) => {
     await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
 
     await page.pdf({
-        path: filePath,
-        format: 'A4',
-        printBackground: true,
-        margin: {
-            top: "20px",
-            bottom: "20px",
-            left: "20px",
-            right: "20px"
-        }
+      path: filePath,
+      format: 'A4',
+      printBackground: true,
+      margin: { top: "20px", bottom: "20px", left: "20px", right: "20px" }
     });
 
-    await browser.close();
-
     return filePath;
-}
+  } catch (err) {
+    console.error("PDF generation failed:", err);
+    throw new Error("PDF generation failed");
+  } finally {
+    if (browser) await browser.close();
+  }
+};
 
 export default generatePDF;
