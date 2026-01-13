@@ -1,8 +1,8 @@
-import { notifyAdmin, notifyUserById } from "../models/notification.model.js";
+import { notifyAdmin, notifyTechnicians, notifyUserById } from "../models/notification.model.js";
 import { addProgressHistoryEntry } from "../models/progressHistory.model.js";
-import { addTicketData, getAllTickets, updateTicket } from "../models/ticket.Model.js";
-import { newTicketAdminEmail, residentAssignedEmail, technicianAssignmentEmail } from "../utils/emailTemplates.js";
-import { newTicketAdminSMS, technicianAssignmentSMS, residentAssignedSMS } from "../utils/smsTemplates.js";
+import { acceptTicketByTechnician, addTicketData, getAllTickets, updateTicket } from "../models/ticket.Model.js";
+import { newTicketAdminEmail, residentAssignedEmail, technicianAcceptedAdminEmail, technicianAcceptedResidentEmail, technicianAssignmentEmail } from "../utils/emailTemplates.js";
+import { newTicketAdminSMS, technicianAssignmentSMS, residentAssignedSMS, technicianAcceptedAdminSMS, technicianAcceptedResidentSMS } from "../utils/smsTemplates.js";
 
 
 const diplayAllTickets = async (req, res) => {
@@ -40,6 +40,11 @@ const createTicket = async (req, res) => {
             newTicketAdminEmail(newTicket),
             newTicketAdminSMS(newTicket)
         )
+
+        // await notifyTechnicians(
+        //     newTicket.id,
+        //     newTicket.job_type
+        // ).catch(console.error);
         
 
        
@@ -65,30 +70,63 @@ const createTicket = async (req, res) => {
     }
 }
 
-const assignTechnicianToTicket = async (req, res) => {
+const assignPriorityToTicket = async (req, res) => {
     try {
         const { ticketId} = req.params;
-        const { technician_id,priority } = req.body;
+        const { priority } = req.body;
 
         const ticket = await updateTicket(
             ticketId,
-            { technician_id: technician_id ,priority:priority,status: 'assigned'}
+            { priority:priority}
         )
 
-        await notifyUserById(
-            technician_id,
-            "New Ticket Assigned",
-            technicianAssignmentEmail(ticket),
-            technicianAssignmentSMS(ticket)
-        )
+        await notifyTechnicians(
+            ticket.id,
+            ticket.job_type
+        ).catch(console.error);
 
-        await notifyUserById(
-            ticket.resident_id,
-            "Technician Assigned to Your Ticket",
-            residentAssignedEmail(ticket),
-            residentAssignedSMS(ticket)
-        )
         
+        
+
+        
+        res.status(200).json({ message: "Add priority successfully" });
+    } catch (error) {
+        res.status(500).json({ message: "Failed to add priority", error: error.message });
+    }
+}
+
+const acceptTicket = async (req, res) => {
+    try {
+        const ticketId = req.params.id;
+        const technicianId = req.user.id; // from auth middleware
+
+        const ticket = await acceptTicketByTechnician(
+            ticketId,
+            technicianId
+        );
+
+        if (!ticket) {
+            return res.status(409).json({
+                message: "Ticket already assigned"
+            });
+        }
+
+        // 🔔 Notify admin
+        notifyAdmin(
+            ticket.job_type,
+            "Ticket Accepted",
+            technicianAcceptedAdminEmail(ticket),
+            technicianAcceptedAdminSMS(ticket)
+            
+        ).catch(console.error);
+
+        // 🔔 Notify resident
+        notifyUserById(
+            ticket.resident_id,
+            "Technician Assigned",
+            technicianAcceptedResidentEmail(ticket),
+            technicianAcceptedResidentSMS(ticket)
+        ).catch(console.error);
 
         await addProgressHistoryEntry(
             {
@@ -100,10 +138,18 @@ const assignTechnicianToTicket = async (req, res) => {
                 
             }
         );
-        res.status(200).json({ message: "Technician assigned successfully" });
-    } catch (error) {
-        res.status(500).json({ message: "Failed to assign technician", error: error.message });
-    }
-}
 
-export { diplayAllTickets, createTicket,assignTechnicianToTicket };
+        res.status(200).json({
+            message: "Ticket accepted successfully",
+            ticket
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            message: "Failed to accept ticket",
+            error: error.message
+        });
+    }
+};
+
+export { diplayAllTickets, createTicket,assignPriorityToTicket,acceptTicket };

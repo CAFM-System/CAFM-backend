@@ -1,6 +1,11 @@
 import { supabase, supabaseAdmin } from "../config/supabaseClient.js";
+import { technicianBroadcastEmail } from "../utils/emailTemplates.js";
 import { sendEmail } from "../utils/mailer.js";
 import { sendTextLKSMS } from "../utils/sms.js";
+import dotenv, { config } from "dotenv";
+
+dotenv.config();
+
 
 const notifyUserById = async (userId, subject, html, message) => {
 
@@ -51,20 +56,30 @@ const notifyUserById = async (userId, subject, html, message) => {
 }
 
 const notifyAdmin = async (jobType, subject, html, message) => {
-    const { data: admins, error } = await supabaseAdmin
-        .from("admins", { schema: "auth" })
-        .select("user_id")
-        .eq("job_type", jobType);
+  const normalizedJobType = jobType.trim();
 
-    if (error) {
-        console.error("Error fetching admins for notification:", error.message);
-        return;
-    }
+  const { data: admins, error } = await supabaseAdmin
+    .from("admins") // ✅ public schema default
+    .select("user_id")
+    .eq("job_type", normalizedJobType);
 
-    for (const admin of admins) {
-        await notifyUserById(admin.user_id, subject, html, message);
-    }
-}
+  if (error) {
+    console.error("Admin fetch error:", error.message);
+    return;
+  }
+
+  console.log("🟢 Admin count:", admins.length);
+
+  for (const admin of admins) {
+    notifyUserById(
+      admin.user_id,
+      subject,
+      html,
+      message
+    ).catch(console.error);
+  }
+};
+
 
 const getNotificationsForUser = async (userId) => {
     if (!userId) {
@@ -114,4 +129,31 @@ const clearNotificationById = async (notificationId) => {
     }
 }
 
-export { notifyAdmin, notifyUserById, getNotificationsForUser, clearNotificationById };
+const notifyTechnicians = async (ticketId, jobType) => {
+  const { data: techs } = await supabase
+    .from("technicians")
+    .select("user_id")
+    .eq("job", jobType);
+
+  for (const tech of techs) {
+    // optional: store offer
+    await supabaseAdmin
+      .from("ticket_offers")
+      .insert({
+        ticket_id: ticketId,
+        technician_id: tech.user_id
+      });
+
+    const acceptUrl = `${process.env.FRONTEND_URL}/accept-ticket?ticket=${ticketId}`;
+
+    await notifyUserById(
+      tech.user_id,
+      "New Ticket Available",
+      technicianBroadcastEmail(ticketId, acceptUrl),
+      "New ticket available. Check your email to accept."
+    );
+  }
+};
+
+
+export { notifyAdmin, notifyUserById, getNotificationsForUser, clearNotificationById, notifyTechnicians };

@@ -30,6 +30,13 @@ const resolvedTicketSMS = (ticket, resolveTime) => {
     return `CAFM: Your ticket ${ticket.ticket_id} has been resolved at ${resolveTime}.`;
 }
 
+const technicianAcceptedAdminSMS = (ticket) => {
+    return `CAFM Alert: Technician has accepted ticket ${ticket.ticket_id}.`;
+}
+
+const technicianAcceptedResidentSMS = (ticket) => {
+    return `CAFM: A technician has accepted your ticket ${ticket.ticket_id}.`;
+}
 
 
 export { 
@@ -40,5 +47,7 @@ export {
     closedTicketSMS,
     reOpenTicketSMS,
     technicianworkStartedSMS,
-    resolvedTicketSMS
+    resolvedTicketSMS,
+    technicianAcceptedAdminSMS,
+    technicianAcceptedResidentSMS
 };

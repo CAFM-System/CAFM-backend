@@ -41,6 +41,87 @@ const reOpenTicketEmail = (ticket)=>{
     <p><b>${ticket.ticket_id}</b> has been reopened.</p>`
 }
 
+const technicianBroadcastEmail = (ticketId, acceptUrl) => {
+  return `
+    <div style="
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.6;
+      background-color: #FCF9EA;
+      padding: 24px;
+      border-radius: 10px;
+      color: #334443;
+      max-width: 600px;
+      margin: 0 auto;
+    ">
+
+      <h2 style="
+        color: #334443;
+        margin-bottom: 16px;
+      ">
+        🔔 New Ticket Available
+      </h2>
+
+      <p style="margin-bottom: 12px;">
+        A new ticket matching your job type has been created.
+      </p>
+
+      <p style="margin-bottom: 12px;">
+        <strong>Ticket ID:</strong> ${ticketId}
+      </p>
+
+      <p style="margin-bottom: 20px;">
+        Click the button below to accept this ticket.
+        <br />
+        <strong style="color:#F0A500;">
+          Note:
+        </strong>
+        The ticket will be assigned to the
+        <em>first technician who accepts it</em>.
+      </p>
+
+      <a
+        href="${acceptUrl}"
+        style="
+          display: inline-block;
+          padding: 14px 26px;
+          background-color: #F0A500;
+          color: #334443;
+          text-decoration: none;
+          border-radius: 8px;
+          font-weight: bold;
+          font-size: 16px;
+        "
+      >
+        ✅ Accept Ticket
+      </a>
+
+      <p style="
+        margin-top: 28px;
+        font-size: 12px;
+        color: #334443;
+        opacity: 0.8;
+      ">
+        If you did not expect this email, you can safely ignore it.
+      </p>
+
+    </div>
+  `;
+};
+
+const technicianAcceptedAdminEmail = (ticket) => {
+  return `
+    <h3>Technician Accepted Ticket</h3>
+    <p>Technician has accepted ticket ID: <b>${ticket.ticket_id}</b>.</p>
+  `;
+}
+
+const technicianAcceptedResidentEmail = (ticket) => {
+  return `
+    <h3>Technician Accepted Your Ticket</h3>
+    <p>A technician has accepted your ticket ID: <b>${ticket.ticket_id}</b>.</p>
+  `;
+}
+
 export {
     newTicketAdminEmail,
     technicianAssignmentEmail,
@@ -49,5 +130,8 @@ export {
     technicianworkStartedEmail,
     resolvedTicketEmail,
     closedTicketEmail,
-    reOpenTicketEmail
+    reOpenTicketEmail,
+    technicianBroadcastEmail,
+    technicianAcceptedAdminEmail,
+    technicianAcceptedResidentEmail
 };
