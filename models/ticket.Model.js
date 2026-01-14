@@ -85,4 +85,28 @@ const getTicketsByCreatedMonth = async (year, month) => {
     return data;
 }
 
-export { getAllTickets, addTicketData, getTicketsByCreatedMonth,getTicketById,updateTicket };
+/**
+ * Technician accepts a ticket (atomic – first accept wins)
+ */
+const acceptTicketByTechnician = async (ticketId, technicianId) => {
+        const { data, error } = await supabase
+    .from(TABLE_NAME)
+    .update({
+        technician_id: technicianId,
+        status: "assigned"
+    })
+    .eq("id", ticketId)
+    .eq("status", "open")
+    .select()
+    .maybeSingle();
+
+    if (!data) {
+    return null; // truly not updated
+    }
+
+    return data;
+
+};
+
+
+export { getAllTickets, addTicketData, getTicketsByCreatedMonth,getTicketById,updateTicket,acceptTicketByTechnician };
