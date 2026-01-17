@@ -1,6 +1,6 @@
 import { notifyAdmin, notifyTechnicians, notifyUserById } from "../models/notification.model.js";
 import { addProgressHistoryEntry } from "../models/progressHistory.model.js";
-import { acceptTicketByTechnician, addTicketData, getAllTickets, updateTicket } from "../models/ticket.Model.js";
+import { acceptTicketByTechnician, addTicketData, getAllTickets, getTicketById, updateTicket } from "../models/ticket.Model.js";
 import { newTicketAdminEmail, residentAssignedEmail, technicianAcceptedAdminEmail, technicianAcceptedResidentEmail, technicianAssignmentEmail } from "../utils/emailTemplates.js";
 import { newTicketAdminSMS, technicianAssignmentSMS, residentAssignedSMS, technicianAcceptedAdminSMS, technicianAcceptedResidentSMS } from "../utils/smsTemplates.js";
 
@@ -19,6 +19,19 @@ const diplayAllTickets = async (req, res) => {
           )  
     } catch (error) {
         res.status(500).json({ message: "Failed to fetch tickets", error: error.message });
+    }
+}
+
+const displayTicketById = async (req, res) => {
+    try {
+        const ticketId = req.params.id;
+        const ticket = await getTicketById(ticketId);
+        res.status(200).json({
+            message: "Ticket fetched successfully",
+            ticket: ticket
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Failed to fetch ticket", error: error.message });
     }
 }
 
@@ -152,4 +165,4 @@ const acceptTicket = async (req, res) => {
     }
 };
 
-export { diplayAllTickets, createTicket,assignPriorityToTicket,acceptTicket };
+export { diplayAllTickets, createTicket,assignPriorityToTicket,acceptTicket, displayTicketById };
