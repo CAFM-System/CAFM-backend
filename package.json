@@ -7,10 +7,10 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "node test/test.js",
-    "dev": "nodemon app.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "apptest": "nodemon test/app.test.js"
+    "start": "node test/app.test.js",
+    "dev": "nodemon --watch . --ext js,json test/app.test.js",
+    "apptest": "nodemon --watch . --ext js,json test/app.test.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.86.0",
@@ -26,6 +26,10 @@
     "puppeteer": "^24.32.1",
     "textlk-node": "^1.0.1"
   },
+  "nodemonConfig": {
+    "legacyWatch": true
+  }, 
+
   "devDependencies": {
     "nodemon": "^3.1.11"
   }
