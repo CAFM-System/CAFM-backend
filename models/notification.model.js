@@ -2,7 +2,7 @@ import { supabase, supabaseAdmin } from "../config/supabaseClient.js";
 import { technicianBroadcastEmail } from "../utils/emailTemplates.js";
 import { sendEmail } from "../utils/mailer.js";
 import { sendTextLKSMS } from "../utils/sms.js";
-import dotenv, { config } from "dotenv";
+import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -59,7 +59,7 @@ const notifyAdmin = async (jobType, subject, html, message) => {
   const normalizedJobType = jobType.trim();
 
   const { data: admins, error } = await supabaseAdmin
-    .from("admins") // ✅ public schema default
+    .from("admins") 
     .select("user_id")
     .eq("job_type", normalizedJobType);
 
@@ -79,6 +79,42 @@ const notifyAdmin = async (jobType, subject, html, message) => {
     ).catch(console.error);
   }
 };
+
+const notifyVisitor = async (email,phone,subject,html, qrBuffer) => {
+    
+    const message = `Your QR code has been generated. Please check your email for the QR code.`;
+    if(!email && !phone) {
+        console.error("No email or phone number provided for QR code notification.");
+        return;
+    }
+    try {
+        if(email) {
+            await sendEmail(
+                {
+                    to: email,
+                    subject,
+                    html,
+                    attachments: qrBuffer
+                        ? [
+                            {
+                                filename: "visitor-qr.png",
+                                content: qrBuffer,
+                                cid: "visitorqr"
+                            }
+                            ]
+                        : []
+                }
+            )
+            console.log(`✓ QR code email sent to ${email}`);
+        }
+        // if(phone) {
+        //     await sendTextLKSMS(phone, message);
+        //     console.log(`✓ QR code SMS sent to ${phone}`);
+        // }
+    } catch (error) {
+        console.error("Error sending QR code notification:", error);
+    }
+}
 
 
 const getNotificationsForUser = async (userId) => {
@@ -156,4 +192,4 @@ const notifyTechnicians = async (ticketId, jobType) => {
 };
 
 
-export { notifyAdmin, notifyUserById, getNotificationsForUser, clearNotificationById, notifyTechnicians };
+export { notifyAdmin, notifyUserById, getNotificationsForUser, clearNotificationById, notifyTechnicians, notifyVisitor };

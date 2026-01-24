@@ -108,6 +108,98 @@ const technicianBroadcastEmail = (ticketId, acceptUrl) => {
   `;
 };
 
+const visitorQrEmail = (
+  fullName,
+  validFrom,
+  validUntil
+) => {
+  return `
+    <div style="
+      max-width: 600px;
+      margin: auto;
+      background-color: #FCF9EA;
+      font-family: Arial, Helvetica, sans-serif;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #e5e2d6;
+    ">
+
+      <!-- Header -->
+      <div style="
+        background-color: #334443;
+        padding: 20px;
+        text-align: center;
+        color: #FCF9EA;
+      ">
+        <h2 style="margin: 0;">Visitor Access QR Code</h2>
+      </div>
+
+      <!-- Body -->
+      <div style="padding: 24px; color: #334443;">
+        <p style="font-size: 15px;">
+          Hello <strong>${fullName}</strong>,
+        </p>
+
+        <p style="font-size: 14px; line-height: 1.6;">
+          Please present the QR code below at the security entrance.
+          This QR is system-generated and will be validated upon scanning.
+        </p>
+
+        <!-- QR Box -->
+        <div style="
+          text-align: center;
+          margin: 24px 0;
+          padding: 20px;
+          background-color: #ffffff;
+          border-radius: 6px;
+          border: 2px dashed #F0A500;
+        ">
+          <img
+            src="cid:visitorqr"
+            alt="Visitor QR Code"
+            style="width: 220px; height: 220px;"
+          />
+        </div>
+
+        <!-- Validity -->
+        <div style="
+          background-color: #F0A500;
+          padding: 14px;
+          border-radius: 6px;
+          color: #334443;
+          font-size: 14px;
+        ">
+          <strong>Validity Period</strong><br />
+          From: ${validFrom || "N/A"}<br />
+          Until: ${validUntil || "Single use"}
+        </div>
+
+        <p style="
+          margin-top: 20px;
+          font-size: 13px;
+          color: #555;
+        ">
+          ⚠️ Do not share this QR code with others.  
+          Unauthorized use or expired QR codes will be denied entry.
+        </p>
+      </div>
+
+      <!-- Footer -->
+      <div style="
+        background-color: #334443;
+        padding: 14px;
+        text-align: center;
+        font-size: 12px;
+        color: #FCF9EA;
+      ">
+        CAFM Visitor Management System<br />
+        <span style="opacity: 0.8;">This is an automated email. Please do not reply.</span>
+      </div>
+    </div>
+  `;
+};
+
+
 const technicianAcceptedAdminEmail = (ticket) => {
   return `
     <h3>Technician Accepted Ticket</h3>
@@ -133,5 +225,6 @@ export {
     reOpenTicketEmail,
     technicianBroadcastEmail,
     technicianAcceptedAdminEmail,
-    technicianAcceptedResidentEmail
+    technicianAcceptedResidentEmail,
+    visitorQrEmail
 };
