@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-const sendEmail = async ({to, subject,html}) => {
+const sendEmail = async ({to, subject,html,attachments = []}) => {
     if(!to){
         throw new Error("sendEmail called without recipient 'to' address");
     }
@@ -19,7 +19,8 @@ const sendEmail = async ({to, subject,html}) => {
         from:`"CAFM System" <${process.env.EMAIL_USER}>`,
         to,
         subject,
-        html
+        html,
+        attachments 
     });
 };
 
