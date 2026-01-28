@@ -7,8 +7,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "node test/app.test.js",
-    "dev": "nodemon --watch . --ext js,json test/app.test.js",
+    "start": "node app.js",
+    "dev": "nodemon --watch . --ext js,json app.js",
     "apptest": "nodemon --watch . --ext js,json test/app.test.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
