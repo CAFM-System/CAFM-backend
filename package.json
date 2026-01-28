@@ -7,10 +7,10 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "node test/test.js",
-    "dev": "nodemon app.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "apptest": "nodemon test/app.test.js"
+    "start": "node test/app.test.js",
+    "dev": "nodemon --watch . --ext js,json test/app.test.js",
+    "apptest": "nodemon --watch . --ext js,json test/app.test.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.86.0",
@@ -21,10 +21,15 @@
     "exceljs": "^4.4.0",
     "express": "^5.1.0",
     "install": "^0.13.0",
+    "jsonwebtoken": "^9.0.3",
     "nodemailer": "^7.0.11",
     "npm": "^11.6.4",
     "puppeteer": "^24.32.1",
+    "qrcode": "^1.5.4",
     "textlk-node": "^1.0.1"
+  },
+  "nodemonConfig": {
+    "legacyWatch": true
   },
   "devDependencies": {
     "nodemon": "^3.1.11"
