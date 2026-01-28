@@ -1,5 +1,5 @@
 import { getTicketById } from "../models/ticket.Model.js";
-import { getReviewsByTicketId, insertTicketReview } from "../models/ticketReview.model.js";
+import { getReviewsByTicketId, insertTicketReview, getReviewsByTechnicianId } from "../models/ticketReview.model.js";
 
 const addTicketReview = async (req, res)=>{
     try {
@@ -49,5 +49,19 @@ const getTicketReview = async (req, res)=>{
         res.status(500).json({ message: error.message });
     }
 }
+const getMyReviews = async (req, res) => {
+    try {
+        const technicianId = req.user.id;
+        console.log("Controller: Requesting reviews for:", technicianId); // Debug Log
 
-export { addTicketReview, getTicketReview };
+        const reviews = await getReviewsByTechnicianId(technicianId);
+        
+        // Return result
+        res.status(200).json({ reviews });
+    } catch (error) {
+        console.error("Controller Error:", error.message); // This prints to your VS Code Terminal
+        res.status(500).json({ message: error.message });
+    }
+};
+
+export { addTicketReview, getTicketReview, getMyReviews };
