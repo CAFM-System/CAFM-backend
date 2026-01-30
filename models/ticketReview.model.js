@@ -33,9 +33,28 @@ const getReviewsByTechnicianId = async (technicianId) => {
     // We removed 'tickets(...)' and 'profiles(...)' to stop the crashing.
     const { data, error } = await supabaseAdmin
         .from(TABLE_NAME)
-        .select("*") 
+        .select(`
+        id,
+        rating,
+        review,
+        created_at,
+        ticket_id,
+        tickets:ticket_id (
+            id,
+            ticket_id,
+            title,
+            complaint,
+            status,
+            priority,
+            resident_name,
+            created_at,
+            location
+        )
+        `)
         .eq("technician_id", technicianId)
         .order("created_at", { ascending: false });
+
+    
 
     if (error) {
         console.error("Supabase Error:", error.message);
