@@ -1,5 +1,4 @@
 import { loginUser, getUserRole, getUserProfile, logoutUser, sendPasswordResetEmail, signUpUser } from "../models/auth.model.js";
-import { supabaseAdmin } from "../config/supabaseClient.js";
 import { createClient } from '@supabase/supabase-js';
 
 // Login controller
@@ -207,7 +206,7 @@ const resetPassword = async (req, res) => {
     );
 
     // Set the session using the recovery token
-    const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
+    const { error: sessionError } = await supabase.auth.setSession({
       access_token: token,
       refresh_token: token
     });

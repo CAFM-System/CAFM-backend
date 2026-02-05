@@ -1,4 +1,4 @@
-import { supabase, supabaseAdmin } from "../config/supabaseClient.js";
+import { supabase } from "../config/supabaseClient.js";
 
 const getTechnicians = async (jobType) => {
     const { data, error } = await supabase

@@ -1,8 +1,8 @@
 import { notifyAdmin, notifyTechnicians, notifyUserById } from "../models/notification.model.js";
 import { addProgressHistoryEntry } from "../models/progressHistory.model.js";
 import { acceptTicketByTechnician, addTicketData, getAllTickets, getTicketById, updateTicket } from "../models/ticket.Model.js";
-import { newTicketAdminEmail, residentAssignedEmail, technicianAcceptedAdminEmail, technicianAcceptedResidentEmail, technicianAssignmentEmail } from "../utils/emailTemplates.js";
-import { newTicketAdminSMS, technicianAssignmentSMS, residentAssignedSMS, technicianAcceptedAdminSMS, technicianAcceptedResidentSMS } from "../utils/smsTemplates.js";
+import { newTicketAdminEmail,technicianAcceptedAdminEmail, technicianAcceptedResidentEmail} from "../utils/emailTemplates.js";
+import { newTicketAdminSMS, technicianAcceptedAdminSMS, technicianAcceptedResidentSMS } from "../utils/smsTemplates.js";
 
 
 const diplayAllTickets = async (req, res) => {

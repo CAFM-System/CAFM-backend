@@ -126,7 +126,7 @@ const signUpUser = async (email, password, first_name, last_name, apartment_no, 
     throw profileError;
   }
 
-  const { data: residentData, error: residentError } = await supabaseAdmin
+  const { error: residentError } = await supabaseAdmin
     .from("residents")
     .insert([
       {

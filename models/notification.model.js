@@ -23,7 +23,7 @@ const notifyUserById = async (userId, subject, html, message) => {
         .maybeSingle();
 
     if (error_email || error_sms) {
-        console.error("Error fetching user for notification:", error.message);
+        console.error("Error fetching user for notification:", error_email?.message || error_sms?.message);
         return;
     }
 
@@ -107,10 +107,10 @@ const notifyVisitor = async (email,phone,subject,html, qrBuffer) => {
             )
             console.log(`✓ QR code email sent to ${email}`);
         }
-        // if(phone) {
-        //     await sendTextLKSMS(phone, message);
-        //     console.log(`✓ QR code SMS sent to ${phone}`);
-        // }
+        if(phone) {
+            await sendTextLKSMS(phone, message);
+            console.log(`✓ QR code SMS sent to ${phone}`);
+        }
     } catch (error) {
         console.error("Error sending QR code notification:", error);
     }
