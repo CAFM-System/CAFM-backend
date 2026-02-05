@@ -1,4 +1,4 @@
-import { supabase, supabaseAdmin } from "../config/supabaseClient.js";
+import { supabaseAdmin } from "../config/supabaseClient.js";
 
 const TABLE_NAME = 'visitors';
 

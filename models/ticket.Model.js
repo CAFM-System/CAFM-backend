@@ -89,7 +89,7 @@ const getTicketsByCreatedMonth = async (year, month) => {
  * Technician accepts a ticket (atomic – first accept wins)
  */
 const acceptTicketByTechnician = async (ticketId, technicianId) => {
-        const { data, error } = await supabase
+        const { data } = await supabase
     .from(TABLE_NAME)
     .update({
         technician_id: technicianId,

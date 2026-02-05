@@ -1,7 +1,7 @@
 import { getProgressHistoryByTicketId, addProgressHistoryEntry } from "../models/progressHistory.model.js";
 import { getTicketById } from "../models/ticket.Model.js";
-import { statusUpdateEmail } from "../utils/emailTemplates.js";
-import { ticketUpdatedSMS } from "../utils/smsTemplates.js";
+
+
 
 const getProgressHistory = async (req, res) => {
     try {
@@ -26,7 +26,7 @@ const addProgressHistory = async (req, res) => {
 
         await addProgressHistoryEntry(progressData);
 
-        const ticket  = await getTicketById(progressData.ticket_id);
+        
         
         
 
