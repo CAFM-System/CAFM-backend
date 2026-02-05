@@ -10,7 +10,11 @@
     "start": "node app.js",
     "dev": "nodemon --watch . --ext js,json app.js",
     "apptest": "nodemon --watch . --ext js,json test/app.test.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.86.0",
@@ -32,6 +36,10 @@
     "legacyWatch": true
   },
   "devDependencies": {
-    "nodemon": "^3.1.11"
+    "eslint": "^8.57.1",
+    "globals": "^17.3.0",
+    "nodemon": "^3.1.11",
+    "supertest": "^7.2.2",
+    "vitest": "^3.2.4"
   }
 }

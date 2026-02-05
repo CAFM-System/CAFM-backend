@@ -38,4 +38,4 @@ RUN mkdir -p /app/exports && chmod -R 777 /app/exports
 
 EXPOSE 4000
 
-CMD ["npm", "run", "apptest"]
+CMD ["npm", "run", "dev"]
