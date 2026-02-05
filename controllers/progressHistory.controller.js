@@ -1,5 +1,5 @@
 import { getProgressHistoryByTicketId, addProgressHistoryEntry } from "../models/progressHistory.model.js";
-import { getTicketById } from "../models/ticket.Model.js";
+//import { getTicketById } from "../models/ticket.Model.js";
 
 
 

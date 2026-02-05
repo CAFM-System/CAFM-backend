@@ -11,7 +11,7 @@ const ticketsPDF = (tickets, data) => {
 
     const tableRows = tickets
         .map((ticket, idx) => {
-            const { ticket_updates, ...rest } = ticket;
+            const {...rest } = ticket;
 
             return `
                 <tr>
