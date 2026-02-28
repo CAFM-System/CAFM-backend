@@ -180,7 +180,7 @@ const notifyTechnicians = async (ticketId, jobType) => {
         technician_id: tech.user_id
       });
 
-    const acceptUrl = `${process.env.FRONTEND_URL}/accept-ticket?ticket=${ticketId}`;
+    const acceptUrl = `${process.env.FRONTEND_URL}/technician/accept-ticket?ticket=${ticketId}`;
 
     await notifyUserById(
       tech.user_id,
