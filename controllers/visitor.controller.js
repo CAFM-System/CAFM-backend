@@ -1,5 +1,5 @@
 import { notifyVisitor } from "../models/notification.model.js";
-import { createVisitor } from "../models/visitor.model.js";
+import { createVisitor, getVisitors } from "../models/visitor.model.js";
 import { createvisitorQr,findQrByToken, markQrAsUsed } from "../models/visitorQr.model.js";
 import { visitorQrEmail } from "../utils/emailTemplates.js";
 import { genarateQrToken, verifyQrToken } from "../utils/qrService.js";
@@ -150,4 +150,17 @@ const scanVisitorQr = async (req, res) => {
 }
 
 
-export { preRegisterVisitor, scanVisitorQr };
+const fetchvisitors = async (req, res) => {
+    try {
+        const visitors = await getVisitors();
+        res.status(200).json( visitors );
+        
+        
+    } catch (error) {
+        res.status(500).json({ message: "Failed to fetch visitors", error: error.message });
+    }
+}
+
+
+
+export { preRegisterVisitor, scanVisitorQr, fetchvisitors };
