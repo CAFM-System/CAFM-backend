@@ -7,7 +7,7 @@ import QRCode from "qrcode";
 
 const preRegisterVisitor = async (req, res) => {
     try {
-        const {full_name,phone,email,id_number,vehicle_number,visitor_type,valid_from,valid_until}= req.body;
+        const {full_name,phone,email,id_number,vehicle_number,visitor_type,valid_from,valid_until,others_count}= req.body;
         
 
         if(!visitor_type||!valid_from){
@@ -26,6 +26,7 @@ const preRegisterVisitor = async (req, res) => {
             id_number,
             vehicle_number,
             visitor_type,
+            others_count
         }
         console.log(visitorData);
         const newVisitor = await createVisitor(visitorData);
