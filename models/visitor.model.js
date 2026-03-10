@@ -111,8 +111,8 @@ const getVisitorsByResident = async (residentId) => {
 
     return {
       id: visitor.id,
-      name: visitor.full_name,
-      nic: visitor.id_number,
+      fullName: visitor.full_name,
+      idNumber: visitor.id_number,
       phone: visitor.phone,
       email: visitor.email,
       visitorType: visitor.visitor_type?.toLowerCase(),
@@ -130,9 +130,9 @@ const getVisitorsByResident = async (residentId) => {
       hostPhone: profile?.phone || null,
 
       vehicleNumber: visitor.vehicle_number,
-      othersCount: visitor.others_count ?? 0,
+      numberOfOthers: visitor.others_count ?? 0,
 
-      qrValidFrom: latestQR?.valid_from || null,
+      visitDate: latestQR?.valid_from || null,
       qrValidUntil: latestQR?.valid_until || null,
       qrStatus: latestQR?.status || null,
     };

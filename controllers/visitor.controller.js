@@ -26,7 +26,8 @@ const preRegisterVisitor = async (req, res) => {
             id_number,
             vehicle_number,
             visitor_type,
-            others_count
+            others_count,
+            is_pre_registered: true
         }
         console.log(visitorData);
         const newVisitor = await createVisitor(visitorData);
