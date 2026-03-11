@@ -1,5 +1,5 @@
 import { notifyVisitor } from "../models/notification.model.js";
-import { createVisitor, getVisitors } from "../models/visitor.model.js";
+import { createVisitor, getVisitors, getVisitorsByResident } from "../models/visitor.model.js";
 import { createvisitorQr,findQrByToken, markQrAsUsed } from "../models/visitorQr.model.js";
 import { visitorQrEmail } from "../utils/emailTemplates.js";
 import { genarateQrToken, verifyQrToken } from "../utils/qrService.js";
@@ -7,7 +7,7 @@ import QRCode from "qrcode";
 
 const preRegisterVisitor = async (req, res) => {
     try {
-        const {full_name,phone,email,id_number,vehicle_number,visitor_type,valid_from,valid_until}= req.body;
+        const {full_name,phone,email,id_number,vehicle_number,visitor_type,valid_from,valid_until,others_count}= req.body;
         
 
         if(!visitor_type||!valid_from){
@@ -26,6 +26,8 @@ const preRegisterVisitor = async (req, res) => {
             id_number,
             vehicle_number,
             visitor_type,
+            others_count,
+            is_pre_registered: true
         }
         console.log(visitorData);
         const newVisitor = await createVisitor(visitorData);
@@ -162,5 +164,16 @@ const fetchvisitors = async (req, res) => {
 }
 
 
+const fetchvisitorsByResident = async (req, res) => {
+    try {
+        const residentId = req.user.id;
+        const visitors = await getVisitorsByResident(residentId);
+        res.status(200).json( visitors );
+    } catch (error) {
+        res.status(500).json({ message: "Failed to fetch visitors", error: error.message });
+    }
+}
 
-export { preRegisterVisitor, scanVisitorQr, fetchvisitors };
+
+
+export { preRegisterVisitor, scanVisitorQr, fetchvisitors, fetchvisitorsByResident };

@@ -79,4 +79,66 @@ const getVisitors = async () => {
   
 };
 
-export { createVisitor, getVisitors };
+
+const getVisitorsByResident = async (residentId) => {
+  const { data, error } = await supabase
+    .from("visitors")
+    .select(`
+      *,
+      residents (
+        apartment_no,
+        profiles (
+          first_name,
+          last_name,
+          phone
+        )
+      ),
+      visitor_qr (
+        valid_from,
+        valid_until,
+        status,
+        is_used
+      )
+    `)
+    .eq("resident_id", residentId);   // 🔹 filter here
+
+  if (error) throw new Error(error.message);
+
+  const formattedVisitors = data.map((visitor) => {
+    const resident = visitor.residents;
+    const profile = resident?.profiles;
+    const latestQR = visitor.visitor_qr?.[0];
+
+    return {
+      id: visitor.id,
+      fullName: visitor.full_name,
+      idNumber: visitor.id_number,
+      phone: visitor.phone,
+      email: visitor.email,
+      visitorType: visitor.visitor_type?.toLowerCase(),
+      isPreRegistered: visitor.is_pre_registered ?? false,
+      date: visitor.created_at
+        ? new Date(visitor.created_at).toISOString().split("T")[0]
+        : null,
+      entryTime: visitor.entry_time || null,
+
+      hostName: profile
+        ? `${profile.first_name} ${profile.last_name}`
+        : null,
+
+      hostApartment: resident?.apartment_no || null,
+      hostPhone: profile?.phone || null,
+
+      vehicleNumber: visitor.vehicle_number,
+      numberOfOthers: visitor.others_count ?? 0,
+
+      visitDate: latestQR?.valid_from || null,
+      qrValidUntil: latestQR?.valid_until || null,
+      qrStatus: latestQR?.status || null,
+    };
+  });
+
+  return formattedVisitors;
+};
+
+export { createVisitor, getVisitors, getVisitorsByResident };

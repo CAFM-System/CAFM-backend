@@ -82,7 +82,7 @@ const resolveTicket = async (req, res) => {
 
     const resolveTime = new Date().toISOString();
     const message = req.body.message || "Ticket resolved by technician";
-    const sparePartsUsed = req.body.sparePartsUsed || [];
+    const sparePartsUsed = req.body.sparepartsUsed || [];
     const updateData = { completed_date: resolveTime, status: "resolved", spare_parts: sparePartsUsed };
     const attachment = {
       ticket_id: ticketId,
