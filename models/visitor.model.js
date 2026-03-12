@@ -68,8 +68,8 @@ const getVisitors = async () => {
       othersCount: visitor.others_count ?? 0,
 
       // optional QR info if needed
-      qrValidFrom: latestQR?.valid_from || null,
-      qrValidUntil: latestQR?.valid_until || null,
+      validFrom: latestQR?.valid_from || null,
+      validUntil: latestQR?.valid_until || null,
       qrStatus: latestQR?.status || null,
     };
   });

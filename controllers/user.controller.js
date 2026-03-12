@@ -1,4 +1,4 @@
-import { getTechnicians } from "../models/user.model.js";
+import { getResidents, getTechnicians } from "../models/user.model.js";
 
 const getAllTechnicians = async (req, res) => {
     try {
@@ -20,4 +20,13 @@ const getAllTechnicians = async (req, res) => {
     }
 }
 
-export { getAllTechnicians };
+const getAllResidents = async (req, res) => {
+    try {
+        const residents = await getResidents();
+        res.status(200).json(residents);
+    } catch (error) {
+        res.status(500).json({ message: "Failed to fetch residents", error: error.message });
+    }
+}
+
+export { getAllTechnicians, getAllResidents };
