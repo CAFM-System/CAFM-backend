@@ -174,6 +174,36 @@ const fetchvisitorsByResident = async (req, res) => {
     }
 }
 
+const onSiteVisitorRegistration = async (req, res) => {
+    try {
+        const {visitor_name,phone,email,nic,vehicle_number,others_count,resident_id}= req.body;
+            if(!visitor_name||!phone||!email||!nic||!resident_id){
+                return res.status(400).json({ message: "Missing required fields." });
+            }
+
+        const visitorData = {
+            resident_id,
+            full_name: visitor_name,
+            phone,
+            email,
+            id_number: nic,
+            vehicle_number,
+            visitor_type: "NORMAL",
+            others_count,
+            is_pre_registered: false
+
+        }
+
+        const newVisitor = await createVisitor(visitorData);
+        res.status(200).json({
+            message: "On-site visitor registered successfully.",
+            visitor: newVisitor
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Failed to register on-site visitor", error: error.message });
+    }
+}
 
 
-export { preRegisterVisitor, scanVisitorQr, fetchvisitors, fetchvisitorsByResident };
+
+export { preRegisterVisitor, scanVisitorQr, fetchvisitors, fetchvisitorsByResident, onSiteVisitorRegistration };
