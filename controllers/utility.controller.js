@@ -1,7 +1,10 @@
-import generatePDF from "../utils/generatePDF.js";
+import { generatePDFforTickets, generatePDFforVisitors } from "../utils/generatePDF.js";
 import { getAllTickets, getTicketsByCreatedMonth } from "../models/ticket.Model.js";
-import generateExcel from "../utils/generateExcel.js";
+import { getVisitors } from "../models/visitor.model.js";
+import { generateExcelForTickets, generateExcelForVisitors } from "../utils/generateExcel.js";
 import fs from "fs";
+
+const delete_timeout = 1000 * 60; // 1 minute
 
 /**
  * Transforms ticket data into a printable format with formatted column names
@@ -55,7 +58,7 @@ const generateTicketsPDF = async (req, res) => {
             return res.status(404).json({ message: "No tickets found for the specified criteria" });
         }
 
-        const filePath = await generatePDF(printableTickets, req.body);
+        const filePath = await generatePDFforTickets(printableTickets, req.body);
 
         res.download(filePath, (error) => {
             if (error) {
@@ -68,7 +71,7 @@ const generateTicketsPDF = async (req, res) => {
                     if (unlinkErr) console.error("Delete error:", unlinkErr);
                     else console.log(`Deleted: ${filePath}`);
                 });
-            }, 1000 * 60);
+            }, delete_timeout);
         });
 
     } catch (error) {
@@ -95,7 +98,7 @@ const generateTicketsExcel = async (req, res) => {
             return res.status(404).json({ message: "No tickets found for the specified criteria" });
         }
 
-        const filePath = await generateExcel(printableTickets, req.body);
+        const filePath = await generateExcelForTickets(printableTickets, req.body);
 
         res.download(filePath, (error) => {
             if (error) {
@@ -108,11 +111,99 @@ const generateTicketsExcel = async (req, res) => {
                     if (unlinkErr) console.error("Delete error:", unlinkErr);
                     else console.log(`Deleted: ${filePath}`);
                 });
-            }, 60_000);
+            }, delete_timeout);
         });
     } catch (error) {
         res.status(500).json({ message: "Failed to generate Excel", error: error.message });
     }
 };
 
-export { generateTicketsPDF, generateTicketsExcel };
+/* Visitor Management */
+
+/**
+ * 
+ * @param {*} visitors 
+ * @returns 
+ */
+const createPrntableVisitorData = (visitors) => {
+    return visitors.map(visitor => {
+        return {
+            "VISITOR ID": visitor.id,
+            "NAME": visitor.name,
+            "HOST NAME": visitor.hostName || "N/A",
+            "APARTMENT": visitor.hostApartment || "N/A",
+            "PHONE": visitor.phone,
+            "EMAIL": visitor.email,
+            "NIC": visitor.nic,
+            "VEHICLE NUMBER": visitor.vehicleNumber || "N/A",
+            "OTHERS": visitor.othersCount || "N/A",
+            "VISITOR TYPE": visitor.visitorType,
+            "REGISTRATION": visitor.isPreRegistered ? "Yes" : "No",
+            "ENTRY TIME": visitor.entryTime ? new Date(visitor.entryTime).toLocaleTimeString() : "N/A",
+            "DATE": visitor.date ? new Date(visitor.date).toLocaleDateString() : "N/A",
+            "HOST PHONE": visitor.hostPhone || "N/A",
+        };
+    });
+}
+
+const generateVisitorsPDF = async (req, res) => {
+    console.log("Generating visitor PDF...");
+    try {
+        const visitors = await getVisitors();
+        const printableVisitors = createPrntableVisitorData(visitors);
+
+        if (!printableVisitors || printableVisitors.length === 0) {
+            return res.status(404).json({ message: "No visitors found" });
+        }
+
+        const filePath = await generatePDFforVisitors(printableVisitors);
+
+        res.download(filePath, (error) => {
+            if (error) {
+                console.error("Error sending file:", error);
+                return res.status(500).json({ message: "Error downloading the file", error: error.message });
+            }
+
+            setTimeout(() => {
+                fs.unlink(filePath, (unlinkErr) => {
+                    if (unlinkErr) console.error("Delete error:", unlinkErr);
+                    else console.log(`Deleted: ${filePath}`);
+                });
+            }, delete_timeout);
+        });
+
+    } catch (error) {
+        res.status(500).json({ message: "Failed to generate PDF", error: error.message });
+    }
+}
+
+const generateVisitorsExcel = async (req, res) => {
+    try {
+        const visitors = await getVisitors();
+        const printableVisitors = createPrntableVisitorData(visitors);
+
+        if (!printableVisitors || printableVisitors.length === 0) {
+            return res.status(404).json({ message: "No visitors found" });
+        }
+
+        const filePath = await generateExcelForVisitors(printableVisitors);
+
+        res.download(filePath, (error) => {
+            if (error) {
+                console.error("Error sending file:", error);
+                return res.status(500).json({ message: "Error downloading the file", error: error.message });
+            }
+
+            setTimeout(() => {
+                fs.unlink(filePath, (unlinkErr) => {
+                    if (unlinkErr) console.error("Delete error:", unlinkErr);
+                    else console.log(`Deleted: ${filePath}`);
+                });
+            }, delete_timeout);
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Failed to generate Excel", error: error.message });
+    }
+};
+
+export { createPrntableVisitorData, generateTicketsPDF, generateTicketsExcel, generateVisitorsPDF, generateVisitorsExcel };
