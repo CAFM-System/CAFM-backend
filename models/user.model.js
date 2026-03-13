@@ -22,6 +22,22 @@ const getTechnicians = async (jobType) => {
 
     return data;
 }
-
-
-export { getTechnicians };
+const getResidents = async () => {
+    const { data, error } = await supabase
+    .from("residents")
+    .select(`
+        user_id,
+        apartment_no,
+        building,
+        profiles (
+        first_name,
+        last_name,
+        phone
+        )
+    `);
+    if (error) {
+        throw new Error('Error fetching residents: ' + error.message);
+    }
+    return data;
+}
+export { getTechnicians , getResidents};
