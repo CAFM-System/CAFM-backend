@@ -111,6 +111,7 @@ const getVisitorsByResident = async (residentId) => {
 
     return {
       id: visitor.id,
+      visitorId: visitor.visitor_id,
       fullName: visitor.full_name,
       idNumber: visitor.id_number,
       phone: visitor.phone,
