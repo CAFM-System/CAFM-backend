@@ -7,6 +7,7 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
 
+
 console.log("--- DEBUG: KEY CHECK ---");
 console.log("URL:", supabaseUrl);
 console.log("Service Role Key exists:", !!supabaseServiceRoleKey);
@@ -18,7 +19,9 @@ const baseAuth = {
   persistSession: false,
   autoRefreshToken: false,
   detectSessionInUrl: false
-};
+}
+
+
 
 const supabaseAdmin = createClient(
     supabaseUrl,
@@ -31,6 +34,7 @@ const supabaseAdmin = createClient(
       }
     }}
 );
+
 
 const supabase = createClient(
     supabaseUrl,

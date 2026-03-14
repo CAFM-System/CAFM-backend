@@ -1,9 +1,16 @@
 const checkRole = (...allowedRoles) => {
   return (req, res, next) => {
-    if (!req.user?.role) return res.sendStatus(403);
+    if (!req.user?.role) {
+      return res.status(403).json({ message: "No role found on user" });
+    }
 
-    if (!allowedRoles.includes(req.user.role)) {
-      return res.sendStatus(403);
+    const userRole = req.user.role.toLowerCase();
+    if (!allowedRoles.some((r) => r.toLowerCase() === userRole)) {
+      return res.status(403).json({
+        message: "Insufficient permissions",
+        userRole: req.user.role,
+        required: allowedRoles,
+      });
     }
 
     next();

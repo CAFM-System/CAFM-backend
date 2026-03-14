@@ -2,7 +2,7 @@ import { supabase, supabaseAdmin } from "../config/supabaseClient.js";
 
 // login user
 const loginUser = async (email, password) => {
-  const { data, error } = await supabaseAdmin.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password
   });
@@ -117,6 +117,7 @@ const signUpUser = async (email, password, first_name, last_name, apartment_no, 
         user_id: userId,
         first_name,
         last_name,
+        email,
         phone,
         role: "resident",
       },
