@@ -235,8 +235,10 @@ jobs:
                --restart unless-stopped \
                -v /home/ubuntu/exports:/app/exports \
                -e SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
-               -e SUPABASE_KEY=${{ secrets.SUPABASE_KEY }} \
+               -e SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }} \
+               -e SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }} \
                -e NODE_ENV=production \
+               -e PORT=4000 \
                cafm-backend"
 
       - name: Verify Deployment
