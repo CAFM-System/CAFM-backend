@@ -3,3 +3,26 @@
 /test
 /seeders
 /exports
+
+# Terraform state files (contains sensitive data)
+*.tfstate
+*.tfstate.backup
+*.tfstate.lock.info
+
+# Terraform directory
+.terraform/
+.terraform.lock.hcl
+
+# Terraform variable files (contains secrets)
+*.tfvars
+*.tfvars.json
+
+# Terraform crash logs
+crash.log
+crash.*.log
+
+# Terraform override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
