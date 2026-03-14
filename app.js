@@ -11,6 +11,8 @@ import utilityRouter from "./routes/api/utility.routes.js";
 import authRouter from "./routes/api/auth.routes.js";
 import notificationRouter from "./routes/api/notification.routes.js";
 import visitorRouter from "./routes/api/visitor.routes.js";
+import adminUserRouter from "./routes/api/adminUser.routes.js";
+import residentProfileRouter from "./routes/api/residentProfile.routes.js";
 import { supabase } from "./config/supabaseClient.js";
 
 
@@ -39,6 +41,8 @@ app.use('/api/residents',residentRouter)
 app.use('/api/utility',utilityRouter)
 app.use('/api/notifications',notificationRouter)
 app.use('/api/visitors',visitorRouter)
+app.use('/api/admin/users',adminUserRouter)
+app.use('/api/resident/profile',residentProfileRouter)
 
 
 if(supabase){
