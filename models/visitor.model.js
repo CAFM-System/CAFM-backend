@@ -17,7 +17,7 @@ const createVisitor = async (visitorData) => {
 
 
 const getVisitors = async () => {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from("visitors")
     .select(`
       *,
