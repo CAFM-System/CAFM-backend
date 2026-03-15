@@ -5,8 +5,17 @@ const TABLE_NAME = "tickets";
 const getAllTickets = async (user) => {
     let query = supabaseAdmin
         .from(TABLE_NAME)
-        .select("*")
+        .select(`
+            *,
+            technicians (
+                profiles (
+                    first_name,
+                    last_name
+                )
+            )
+        `)
         .order("created_at", { ascending: false });
+
 
     if(user.role === "resident"){
         query = query.eq("resident_id", user.id);
