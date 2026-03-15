@@ -1,4 +1,4 @@
-import { supabase } from "../config/supabaseClient.js";
+import { supabase, supabaseAdmin } from "../config/supabaseClient.js";
 
 const getTechnicians = async (jobType) => {
     const { data, error } = await supabase
@@ -23,7 +23,7 @@ const getTechnicians = async (jobType) => {
     return data;
 }
 const getResidents = async () => {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
     .from("residents")
     .select(`
         user_id,
