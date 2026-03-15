@@ -144,12 +144,12 @@ const getVisitorsByResident = async (residentId) => {
 
 const updateVisitorByResidentIDandVisitorID = async (visitorId, updateData) => {
   console.log("Updating Visitor with ID:", visitorId, "Update Data:", updateData);
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from(TABLE_NAME)
     .update(updateData)
     .eq("visitor_id", visitorId)
     .select()
-    .single();
+    .maybeSingle();
 
   if (error) {
     throw new Error('Error updating visitor: ' + error.message);

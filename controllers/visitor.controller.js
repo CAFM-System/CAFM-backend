@@ -69,6 +69,11 @@ const preRegisterVisitor = async (req, res) => {
             {
                 visitor_id: newVisitor.id,
                 visitor_type: newVisitor.visitor_type,
+                full_name: newVisitor.full_name,
+                phone: newVisitor.phone,
+                email: newVisitor.email,
+                id_number: newVisitor.id_number,
+                
             },
             jwtExpiresIn
         );
@@ -79,7 +84,8 @@ const preRegisterVisitor = async (req, res) => {
             valid_from,
             valid_until
         })
-        const qrData = `${process.env.FRONTEND_URL}/scan?token=${token}`.trim();
+       // const qrData = `${process.env.FRONTEND_URL}/scan?token=${token}`.trim();
+        const qrData = `${token}/${newVisitor.full_name}/${newVisitor.phone}/${newVisitor.email}/${newVisitor.visitor_type}`;
         const qrBuffer = await QRCode.toBuffer(qrData);
 
 
@@ -126,7 +132,7 @@ const scanVisitorQr = async (req, res) => {
         if ((now < new Date(visitorQr.valid_from) || now > new Date(visitorQr.valid_until)) && visitorQr.visitors.visitor_type === 'REGULAR') {
             return res.status(400).json({ message: "QR expired" });
         }
-        console.log("aDSDdD");
+        
         if (visitorQr.visitors.visitor_type === 'NORMAL') {
             if (visitorQr.is_used) {
                 return res.status(400).json({ message: "QR already used." });
