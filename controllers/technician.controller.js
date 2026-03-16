@@ -1,4 +1,4 @@
-import { addAtachments } from "../models/attachments.model.js";
+import { addAtachments, getAttachmentsByTicketId } from "../models/attachments.model.js";
 import { notifyUserById } from "../models/notification.model.js";
 import { addProgressHistoryEntry } from "../models/progressHistory.model.js";
 import { getTicketById, updateTicket } from "../models/ticket.Model.js";
@@ -121,6 +121,17 @@ const resolveTicket = async (req, res) => {
   }
 }
 
+const fetchAttachments = async (req, res) => {
+  try {
+    const { ticketId } = req.params;
+    const attachments = await getAttachmentsByTicketId(ticketId);
+    return res.status(200).json({ attachments });
+  } catch (error) {
+    console.error("Fetch attachments error:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+}
 
 
-export { addWorkStartTime, resolveTicket };
+
+export { addWorkStartTime, resolveTicket, fetchAttachments };
