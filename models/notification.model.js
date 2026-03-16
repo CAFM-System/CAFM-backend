@@ -32,11 +32,6 @@ const notifyUserById = async (userId, subject, html, message) => {
         return;
     }
 
-    if (!profile?.phone) {
-        console.log(`No phone number found for user ${userId}`);
-        return;
-    }
-
     try {
         await sendEmail(
             {
@@ -46,49 +41,53 @@ const notifyUserById = async (userId, subject, html, message) => {
             }
         )
 
-        await sendTextLKSMS(profile.phone, message);
-
         console.log(`✓ Notification email sent to ${data.user.email}`);
-        console.log(`✓ SMS sent to ${profile.phone}`);
+
+        if (profile?.phone) {
+            await sendTextLKSMS(profile.phone, message);
+            console.log(`✓ SMS sent to ${profile.phone}`);
+        } else {
+            console.log(`No phone number found for user ${userId}. Email sent only.`);
+        }
     } catch (error) {
         console.error("Error sending notification:", error);
     }
 }
 
 const notifyAdmin = async (jobType, subject, html, message) => {
-  const normalizedJobType = jobType.trim();
+    const normalizedJobType = jobType.trim();
 
-  const { data: admins, error } = await supabaseAdmin
-    .from("admins") 
-    .select("user_id")
-    .eq("job_type", normalizedJobType);
+    const { data: admins, error } = await supabaseAdmin
+        .from("admins")
+        .select("user_id")
+        .eq("job_type", normalizedJobType);
 
-  if (error) {
-    console.error("Admin fetch error:", error.message);
-    return;
-  }
+    if (error) {
+        console.error("Admin fetch error:", error.message);
+        return;
+    }
 
-  console.log("🟢 Admin count:", admins.length);
+    console.log("🟢 Admin count:", admins.length);
 
-  for (const admin of admins) {
-    notifyUserById(
-      admin.user_id,
-      subject,
-      html,
-      message
-    ).catch(console.error);
-  }
+    for (const admin of admins) {
+        notifyUserById(
+            admin.user_id,
+            subject,
+            html,
+            message
+        ).catch(console.error);
+    }
 };
 
-const notifyVisitor = async (email,phone,subject,html, qrBuffer) => {
-    
+const notifyVisitor = async (email, phone, subject, html, qrBuffer) => {
+
     const message = `Your QR code has been generated. Please check your email for the QR code.`;
-    if(!email && !phone) {
+    if (!email && !phone) {
         console.error("No email or phone number provided for QR code notification.");
         return;
     }
     try {
-        if(email) {
+        if (email) {
             await sendEmail(
                 {
                     to: email,
@@ -101,13 +100,13 @@ const notifyVisitor = async (email,phone,subject,html, qrBuffer) => {
                                 content: qrBuffer,
                                 cid: "visitorqr"
                             }
-                            ]
+                        ]
                         : []
                 }
             )
             console.log(`✓ QR code email sent to ${email}`);
         }
-        if(phone) {
+        if (phone) {
             await sendTextLKSMS(phone, message);
             console.log(`✓ QR code SMS sent to ${phone}`);
         }
@@ -166,29 +165,43 @@ const clearNotificationById = async (notificationId) => {
 }
 
 const notifyTechnicians = async (ticketId, jobType) => {
-  const { data: techs } = await supabase
-    .from("technicians")
-    .select("user_id")
-    .eq("job", jobType);
+    const normalizedJobType = jobType?.trim();
 
-  for (const tech of techs) {
-    // optional: store offer
-    await supabaseAdmin
-      .from("ticket_offers")
-      .insert({
-        ticket_id: ticketId,
-        technician_id: tech.user_id
-      });
+    const { data: techs, error: techError } = await supabaseAdmin
+        .from("technicians")
+        .select("user_id")
+        .eq("job", normalizedJobType);
 
-    const acceptUrl = `${process.env.FRONTEND_URL}/technician/accept-ticket?ticket=${ticketId}`;
+    if (techError) {
+        throw new Error(`Technician fetch error: ${techError.message}`);
+    }
 
-    await notifyUserById(
-      tech.user_id,
-      "New Ticket Available",
-      technicianBroadcastEmail(ticketId, acceptUrl),
-      "New ticket available. Check your email to accept."
-    );
-  }
+    if (!techs || techs.length === 0) {
+        console.log(`No technicians found for job type: ${normalizedJobType}`);
+        return;
+    }
+
+    for (const tech of techs) {
+        const { error: offerError } = await supabaseAdmin
+            .from("ticket_offers")
+            .insert({
+                ticket_id: ticketId,
+                technician_id: tech.user_id
+            });
+
+        if (offerError) {
+            console.error(`Ticket offer insert failed for technician ${tech.user_id}: ${offerError.message}`);
+        }
+
+        const acceptUrl = `${process.env.FRONTEND_URL}/technician/accept-ticket?ticket=${ticketId}`;
+
+        await notifyUserById(
+            tech.user_id,
+            "New Ticket Available",
+            technicianBroadcastEmail(ticketId, acceptUrl),
+            "New ticket available. Check your email to accept."
+        );
+    }
 };
 
 
