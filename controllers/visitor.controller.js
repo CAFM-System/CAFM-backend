@@ -139,12 +139,13 @@ const scanVisitorQr = async (req, res) => {
             }
             await markQrAsUsed(visitorQr.id);
         }
-
+   
         res.status(200).json({
             message: "Access granted.",
             visitor: {
                 name: visitorQr.visitors.full_name,
-                type: visitorQr.visitors.visitor_type
+                type: visitorQr.visitors.visitor_type,
+                
             }
         })
 
@@ -248,4 +249,31 @@ const deleteVisitor = async (req, res) => {
     }
 }
 
-export { preRegisterVisitor, scanVisitorQr, fetchvisitors, fetchvisitorsByResident, onSiteVisitorRegistration, updateVisitor, deleteVisitor };
+const checkInVisitor = async (req, res) => {
+    try {
+        const {visitorId} = req.params;
+
+        const currentTime = new Date().toTimeString().slice(0, 8);
+
+        console.log("Checking in Visitor with ID:", visitorId, "Current Time:", currentTime);
+        const visitor = await updateVisitorByResidentIDandVisitorID(
+            visitorId,
+            {
+                entry_time: currentTime
+            }
+        )
+
+        if (!visitor) {
+            return res.status(404).json({ message: "Visitor not found." });
+        }
+
+        res.status(200).json({
+            message: "Visitor checked in successfully.",
+            visitor
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Failed to check in visitor", error: error.message });
+    }
+}
+
+export { preRegisterVisitor, scanVisitorQr, fetchvisitors, fetchvisitorsByResident, onSiteVisitorRegistration, updateVisitor, deleteVisitor, checkInVisitor };

@@ -71,6 +71,7 @@ const getVisitors = async () => {
       validFrom: latestQR?.valid_from || null,
       validUntil: latestQR?.valid_until || null,
       qrStatus: latestQR?.status || null,
+      visitor_id: visitor.visitor_id
     };
   });
 
