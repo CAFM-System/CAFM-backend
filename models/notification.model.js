@@ -1,4 +1,4 @@
-import { supabase, supabaseAdmin } from "../config/supabaseClient.js";
+import { supabaseAdmin } from "../config/supabaseClient.js";
 import { technicianBroadcastEmail } from "../utils/emailTemplates.js";
 import { sendEmail } from "../utils/mailer.js";
 import { sendTextLKSMS } from "../utils/sms.js";
@@ -123,7 +123,7 @@ const getNotificationsForUser = async (userId) => {
     }
 
     try {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseAdmin
             .from("progress_histories")
             .select(`
                 *,
@@ -147,7 +147,7 @@ const getNotificationsForUser = async (userId) => {
 
 const clearNotificationById = async (notificationId) => {
     try {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseAdmin
             .from("progress_histories")
             .update({ notify_status: true })
             .eq("id", notificationId);
