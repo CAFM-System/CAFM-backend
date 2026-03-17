@@ -17,11 +17,11 @@ const getAllTickets = async (user) => {
         .order("created_at", { ascending: false });
 
 
-    if(user.role === "resident"){
+    if (user.role === "resident") {
         query = query.eq("resident_id", user.id);
     }
 
-    if(user.role === "technician"){
+    if (user.role === "technician") {
         query = query.eq("technician_id", user.id);
     }
 
@@ -33,7 +33,7 @@ const getAllTickets = async (user) => {
 }
 
 const getTicketById = async (ticketId) => {
-    const { data,error} = await supabaseAdmin
+    const { data, error } = await supabaseAdmin
         .from(TABLE_NAME)
         .select("*")
         .eq("id", ticketId)
@@ -98,19 +98,23 @@ const getTicketsByCreatedMonth = async (year, month) => {
  * Technician accepts a ticket (atomic – first accept wins)
  */
 const acceptTicketByTechnician = async (ticketId, technicianId) => {
-        const { data } = await supabase
-    .from(TABLE_NAME)
-    .update({
-        technician_id: technicianId,
-        status: "assigned"
-    })
-    .eq("id", ticketId)
-    .eq("status", "open")
-    .select()
-    .maybeSingle();
+    const { data, error } = await supabaseAdmin
+        .from(TABLE_NAME)
+        .update({
+            technician_id: technicianId,
+            status: "assigned"
+        })
+        .eq("id", ticketId)
+        .eq("status", "open")
+        .select()
+        .maybeSingle();
+
+    if (error) {
+        throw new Error(error.message);
+    }
 
     if (!data) {
-    return null; // truly not updated
+        return null; // truly not updated
     }
 
     return data;
@@ -118,4 +122,4 @@ const acceptTicketByTechnician = async (ticketId, technicianId) => {
 };
 
 
-export { getAllTickets, addTicketData, getTicketsByCreatedMonth,getTicketById,updateTicket,acceptTicketByTechnician };
+export { getAllTickets, addTicketData, getTicketsByCreatedMonth, getTicketById, updateTicket, acceptTicketByTechnician };
