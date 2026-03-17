@@ -164,7 +164,7 @@ const updateVisitorCheckinStatus = async (visitorId, checkinData) => {
     .update(checkinData)
     .eq("id", visitorId)
     .select()
-    .maybeSingle();
+    .single();
 
   if (error) {
     throw new Error('Error updating visitor check-in status: ' + error.message);
