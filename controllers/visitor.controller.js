@@ -134,18 +134,18 @@ const scanVisitorQr = async (req, res) => {
             if (visitorQr.is_used) {
                 return res.status(400).json({ message: "QR already used." });
             }
-            const checkedInTime = { "entry_time": now };
+            const checkedInTime = { "entry_time": now.toTimeString().slice(0, 8) };
             console.log(checkedInTime);
             await markQrAsUsed(visitorQr.id);
-            await updateVisitorCheckinStatus(visitorQr.visitors.visitor_id, checkedInTime);
+            await updateVisitorCheckinStatus(visitorQr.visitor_id, checkedInTime);
         }
-   
+
         res.status(200).json({
             message: "Access granted.",
             visitor: {
                 name: visitorQr.visitors.full_name,
                 type: visitorQr.visitors.visitor_type,
-                
+
             }
         })
 
@@ -251,7 +251,7 @@ const deleteVisitor = async (req, res) => {
 
 const checkInVisitor = async (req, res) => {
     try {
-        const {visitorId} = req.params;
+        const { visitorId } = req.params;
 
         const currentTime = new Date().toTimeString().slice(0, 8);
 
