@@ -158,6 +158,20 @@ const updateVisitorByResidentIDandVisitorID = async (visitorId, updateData) => {
   return data;
 }
 
+const updateVisitorCheckinStatus = async (visitorId, checkinData) => {
+  const { data, error } = await supabaseAdmin
+    .from(TABLE_NAME)
+    .update(checkinData)
+    .eq("id", visitorId)
+    .select()
+    .maybeSingle();
+
+  if (error) {
+    throw new Error('Error updating visitor check-in status: ' + error.message);
+  }
+  return data;
+}
+
 const deleteVisitorByResidentIDandVisitorID = async (visitorId) => {
   console.log("Deleting Visitor with ID:", visitorId);
   const { data, error } = await supabase
@@ -174,4 +188,4 @@ const deleteVisitorByResidentIDandVisitorID = async (visitorId) => {
   return data;
 }
 
-export { createVisitor, getVisitors, getVisitorsByResident, updateVisitorByResidentIDandVisitorID, deleteVisitorByResidentIDandVisitorID };
+export { createVisitor, getVisitors, getVisitorsByResident, updateVisitorByResidentIDandVisitorID, deleteVisitorByResidentIDandVisitorID, updateVisitorCheckinStatus };
