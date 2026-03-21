@@ -142,6 +142,7 @@ const scanVisitorQr = async (req, res) => {
             await notifyUserById(
                 visitor.resident_id,
                 "Visitor Check-In Alert",
+                `${visitor.full_name} has checked in at ${checkedInTime.entry_time}.`,
                 `${visitor.full_name} has checked in at ${checkedInTime.entry_time}.`
             );
 
@@ -278,6 +279,7 @@ const checkInVisitor = async (req, res) => {
         await notifyUserById(
             visitor.resident_id,
             "Visitor Check-In Alert",
+            `${visitor.full_name} has checked in at ${currentTime}.`,
             `${visitor.full_name} has checked in at ${currentTime}.`
         );
 
