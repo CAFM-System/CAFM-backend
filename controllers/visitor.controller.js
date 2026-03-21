@@ -1,4 +1,4 @@
-import { notifyVisitor } from "../models/notification.model.js";
+import { notifyUserById, notifyVisitor } from "../models/notification.model.js";
 import { createVisitor, getVisitors, getVisitorsByResident, updateVisitorByResidentIDandVisitorID, deleteVisitorByResidentIDandVisitorID, updateVisitorCheckinStatus } from "../models/visitor.model.js";
 import { createvisitorQr, findQrByToken, markQrAsUsed } from "../models/visitorQr.model.js";
 import { visitorQrEmail } from "../utils/emailTemplates.js";
@@ -137,8 +137,16 @@ const scanVisitorQr = async (req, res) => {
             const checkedInTime = { "entry_time": now.toTimeString().slice(0, 8) };
             console.log(checkedInTime);
             await markQrAsUsed(visitorQr.id);
-            await updateVisitorCheckinStatus(visitorQr.visitor_id, checkedInTime);
+            const visitor =await updateVisitorCheckinStatus(visitorQr.visitor_id, checkedInTime);
+
+            await notifyUserById(
+                visitor.resident_id,
+                "Visitor Check-In Alert",
+                `${visitor.full_name} has checked in at ${checkedInTime.entry_time}.`
+            );
+
         }
+
 
         res.status(200).json({
             message: "Access granted.",
@@ -266,6 +274,12 @@ const checkInVisitor = async (req, res) => {
         if (!visitor) {
             return res.status(404).json({ message: "Visitor not found." });
         }
+
+        await notifyUserById(
+            visitor.resident_id,
+            "Visitor Check-In Alert",
+            `${visitor.full_name} has checked in at ${currentTime}.`
+        );
 
         res.status(200).json({
             message: "Visitor checked in successfully.",
