@@ -164,7 +164,7 @@ const clearNotificationById = async (notificationId) => {
     }
 }
 
-const notifyTechnicians = async (ticketId, jobType) => {
+const notifyTechnicians = async (ticketId, jobType, ticketData = {}) => {
     const normalizedJobType = jobType?.trim();
 
     const { data: techs, error: techError } = await supabaseAdmin
@@ -198,7 +198,7 @@ const notifyTechnicians = async (ticketId, jobType) => {
         await notifyUserById(
             tech.user_id,
             "New Ticket Available",
-            technicianBroadcastEmail(ticketId, acceptUrl),
+            technicianBroadcastEmail(ticketId, acceptUrl, ticketData),
             "New ticket available. Check your email to accept."
         );
     }

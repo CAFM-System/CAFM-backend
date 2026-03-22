@@ -41,7 +41,11 @@ const reOpenTicketEmail = (ticket)=>{
     <p><b>${ticket.ticket_id}</b> has been reopened.</p>`
 }
 
-const technicianBroadcastEmail = (ticketId, acceptUrl) => {
+const technicianBroadcastEmail = (ticketId, acceptUrl, ticket = {}) => {
+  const title = ticket.title || "N/A";
+  const complaint = ticket.complaint || "N/A";
+  const priority = ticket.priority || "Not assigned";
+
   return `
     <div style="
       font-family: Arial, Helvetica, sans-serif;
@@ -67,6 +71,18 @@ const technicianBroadcastEmail = (ticketId, acceptUrl) => {
 
       <p style="margin-bottom: 12px;">
         <strong>Ticket ID:</strong> ${ticketId}
+      </p>
+
+      <p style="margin-bottom: 12px;">
+        <strong>Title:</strong> ${title}
+      </p>
+
+      <p style="margin-bottom: 12px;">
+        <strong>Complaint:</strong> ${complaint}
+      </p>
+
+      <p style="margin-bottom: 12px;">
+        <strong>Priority:</strong> ${priority}
       </p>
 
       <p style="margin-bottom: 20px;">
