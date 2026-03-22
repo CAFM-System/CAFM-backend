@@ -29,7 +29,7 @@ const getUserRole = async (userId) => {
 
 // get user profile
 const getUserProfile = async (userId) => {
-  
+
   const { data: profile, error: profileError } = await supabaseAdmin
     .from("profiles")
     .select(`
@@ -48,7 +48,7 @@ const getUserProfile = async (userId) => {
   }
 
 
-  const { data: resident, error: residentError } = await supabase
+  const { data: resident, error: residentError } = await supabaseAdmin
     .from("residents")
     .select("apartment_no, building, date_of_entry")
     .eq("user_id", userId)
@@ -58,7 +58,7 @@ const getUserProfile = async (userId) => {
     console.error("Resident fetch error:", residentError);
   }
 
-  
+
   return {
     ...profile,
     residents: resident || null
@@ -93,7 +93,7 @@ const sendPasswordResetEmail = async (email) => {
 
 // Register user
 
-const signUpUser = async (email, password, first_name, last_name, apartment_no, phone) =>{
+const signUpUser = async (email, password, first_name, last_name, apartment_no, phone) => {
   const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser(
     {
       email,
@@ -105,7 +105,7 @@ const signUpUser = async (email, password, first_name, last_name, apartment_no, 
     if (authError.message.includes("Already registered")) {
       throw new Error("USER_ALREADY_EXISTS");
     }
-    throw  authError;
+    throw authError;
   }
 
   const userId = authData.user.id;
@@ -137,11 +137,11 @@ const signUpUser = async (email, password, first_name, last_name, apartment_no, 
       },
     ]);
 
-    if (residentError) {
-      throw residentError;
-    }
+  if (residentError) {
+    throw residentError;
+  }
   return authData;
-  
-} 
 
-export { loginUser, getUserRole, getUserProfile, logoutUser, sendPasswordResetEmail,signUpUser };
+}
+
+export { loginUser, getUserRole, getUserProfile, logoutUser, sendPasswordResetEmail, signUpUser };
