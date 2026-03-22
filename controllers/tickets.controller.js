@@ -99,7 +99,12 @@ const assignPriorityToTicket = async (req, res) => {
 
         await notifyTechnicians(
             ticket.id,
-            ticket.job_type
+            ticket.job_type,
+            {
+                title: ticket.title,
+                complaint: ticket.complaint,
+                priority: ticket.priority
+            }
         );
 
 
